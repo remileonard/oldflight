@@ -11,14 +11,14 @@
  **************************************************************************/
 
 /* contains plane definitions	*/
-#include "flight.h"
+#include "planes.h"
 
 /************************************************************
 /*	PLANE definition for cessna 150
 /************************************************************/
 /* parts for Cessna 150 */
 
-static Scoord cesswing[][3] = {
+static GLshort cesswing[][3] = {
 	{18,6,-20},
 	{18,6,-16},
 	{8,6,-15},
@@ -27,14 +27,14 @@ static Scoord cesswing[][3] = {
 	{-18,6,-20},
 };
 
-static Scoord cessrstab[][3] = {
+static GLshort cessrstab[][3] = {
 	{0,4,-3},
 	{5,4,-3},
 	{5,4,-1},
 	{1,4,0},
 	{0,4,-2},	
 };
-static Scoord cesslstab[][3] = {
+static GLshort cesslstab[][3] = {
 	{0,4,-3},
 	{-5,4,-3},
 	{-5,4,-1},
@@ -42,7 +42,7 @@ static Scoord cesslstab[][3] = {
 	{0,4,-2},	
 };
 
-static Scoord cessfin[][3] = {
+static GLshort cessfin[][3] = {
 	{0,3,-1},
 	{0,8,0},
 	{0,8,-3},
@@ -50,14 +50,14 @@ static Scoord cessfin[][3] = {
 	{0,2,-5},
 };
 
-static Scoord cessrfus[][3] = {
+static GLshort cessrfus[][3] = {
 	{0,4,-5},
 	{0,2,-5},
 	{2,1,-15},
 	{2,6,-15},
 };
 
-static Scoord cesslfus[][3] = {
+static GLshort cesslfus[][3] = {
 	{0,4,-5},
 	{0,2,-5},
 	{-2,1,-15},
@@ -65,103 +65,103 @@ static Scoord cesslfus[][3] = {
 
 };
 
-static Scoord cesstfus[][3] = {
+static GLshort cesstfus[][3] = {
 	{0,4,-5},
 	{2,6,-15},
 	{-2,6,-15},
 };
 
-static Scoord cessbfus[][3] = {
+static GLshort cessbfus[][3] = {
 	{0,2,-5},
 	{2,1,-15},
 	{-2,1,-15},
 };
 
-static Scoord cessrcabin[][3] = {
+static GLshort cessrcabin[][3] = {
 	{2,4,-15},
 	{2,1,-15},
 	{2,1,-21},
 	{2,4,-21},
 };
 
-static Scoord cesslcabin[][3] = {
+static GLshort cesslcabin[][3] = {
 	{-2,4,-15},
 	{-2,1,-15},
 	{-2,1,-21},
 	{-2,4,-21},
 };
 
-static Scoord cessbcabin[][3] = {
+static GLshort cessbcabin[][3] = {
 	{2,1,-21},
 	{2,1,-15},
 	{-2,1,-15},
 	{-2,1,-21},
 };
 
-static Scoord cessws[][3] = {
+static GLshort cessws[][3] = {
 	{2,4,-21},
 	{2,6,-20},
 	{-2,6,-20},
 	{-2,4,-21},
 };
 
-static Scoord cesstcowl[][3] = {
+static GLshort cesstcowl[][3] = {
 	{2,4,-21},
 	{-2,4,-21},
 	{-1,4,-24},
 	{1,4,-24},
 };
 
-static Scoord cessrcowl[][3] = {
+static GLshort cessrcowl[][3] = {
 	{2,4,-21},
 	{2,1,-21},
 	{1,3,-24},
 	{1,4,-24},
 };
 
-static Scoord cesslcowl[][3] = {
+static GLshort cesslcowl[][3] = {
 	{-2,4,-21},
 	{-2,1,-21},
 	{-1,3,-24},
 	{-1,4,-24},
 };
 
-static Scoord cessbcowl[][3] = {
+static GLshort cessbcowl[][3] = {
 	{2,1,-21},
 	{-2,1,-21},
 	{-1,3,-24},
 	{1,3,-24},
 };
 
-static Scoord cessnose[][3] = {
+static GLshort cessnose[][3] = {
 	{1,4,-24},
 	{-1,4,-24},
 	{-1,3,-24},
 	{1,3,-24},
 };
 
-static Scoord cessrgear[][3] = {
+static GLshort cessrgear[][3] = {
 	{5,0,-15},
 	{5,0,-18},
 	{5,1,-18},
 	{5,1,-15},
 };
 
-static Scoord cesslgear[][3] = {
+static GLshort cesslgear[][3] = {
 	{-5,0,-15},
 	{-5,0,-18},
 	{-5,1,-18},
 	{-5,1,-15},
 };
 
-static Scoord cessngear[][3] = {
+static GLshort cessngear[][3] = {
 	{0,0,-22},
 	{0,0,-23},
 	{0,1,-23},
 	{0,1,-22},
 };
 
-static Scoord cesslwindow[][3] = {
+static GLshort cesslwindow[][3] = {
 	{-2,4,-21},
 	{-2,6,-20},
 	{-2,6,-15},
@@ -169,126 +169,211 @@ static Scoord cesslwindow[][3] = {
 };
 
 
-static Scoord cessrwindow[][3] = {
+static GLshort cessrwindow[][3] = {
 	{2,4,-21},
 	{2,6,-20},
 	{2,6,-15},
 	{2,4,-15},
 };
  
-static Scoord cessfw[][3] = {
+static GLshort cessfw[][3] = {
 	{-20,6,-15},
 	{20,6,-15},
 	{20,6,-20},
 	{-20,6,-20},
 };
 
-static Scoord cessff[][3] = {
+static GLshort cessff[][3] = {
 	{0,0,0},
 	{0,6,0},
 	{0,6,-25},
 	{0,0,-25},
 };
 
-make_c150 (obj)
-    register Object obj;
+void make_c150(GLuint obj) {
+	glNewList(obj++, GL_COMPILE);
+	glEnable(GL_NORMALIZE);
+	setColor(silver9);
+	polfs(5, cessrstab);
+
+	setColor(purple3);
+	polfs(5, cessfin);
+
+	setColor(silver9);
+	polfs(5, cesslstab);
+
+	setColor(purple3);
+	polfs(4, cesslfus);
+
+	setColor(silver8);
+	polfs(6, cesswing);
+
+	setColor(grey9);
+	polfs(4, cessws);
+
+	setColor(grey10);
+	polfs(4, cesslwindow);
+	polfs(4, cessrwindow);
+	setColor(purple3);
+	polfs(4, cesslcabin);
+	polfs(4, cessrcowl);
+	polfs(4, cesslcowl);
+
+
+	setColor(purple3);
+	polfs(4, cessrfus);
+	polfs(4, cessrcabin);
+
+	setColor(purple1);
+	polfs(3, cesstfus);
+	polfs(4, cesstcowl);
+
+	setColor(purple4);
+	polfs(3, cessbfus);
+	polfs(4, cessbcabin);
+	polfs(4, cessbcowl);
+	setColor(silver6);
+	polfs(4, cessrgear);
+	polfs(4, cesslgear);
+	polfs(4, cessngear);
+
+	setColor(brown);
+	polfs(4, cessnose);
+	glEndList();
+
+
+	/* shadow	*/
+	glNewList(obj+9, GL_COMPILE);		
+	setColor(black);
+	setpattern(3);
+	polfs(6, cesswing);
+	polfs(5, cessfin);
+	polfs(5, cessrstab);
+	polfs(5, cesslstab);
+	polfs(4, cesslfus);
+	polfs(4, cessrfus);
+	polfs(3, cesstfus);
+
+	polfs(4, cesslcabin);
+	polfs(4, cessrcabin);
+
+	polfs(4, cessrcowl);
+	polfs(4, cesslcowl);
+	polfs(4, cesstcowl);
+	setpattern(0);
+	glDisable(GL_NORMALIZE);
+	glEndList();
+
+	/* shadow far away	*/
+	glNewList(obj + 100, GL_COMPILE);		
+	setColor(black);
+	setpattern(3);
+	polfs(4, cessff);
+	polfs(4, cessfw);
+	setpattern(0);
+	glEndList();
+
+}
+
+
+void make_c150_old (GLuint obj)
 {
-    makeobj (obj++);	/* below, left, front	*/
-	color(silver9);
+    glNewList (obj++,GL_COMPILE);	/* below, left, front	*/
+	setColor(silver9);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslfus);
 
-	color(silver8);
+	setColor(silver8);
 	polfs(6,cesswing);
 
-	color(grey9);
+	setColor(grey9);
 	polfs(4,cessws);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cesslwindow);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslcabin);
 	polfs(4,cessrcowl);
 	polfs(4,cesslcowl);
 
-	color(purple4);
+	setColor(purple4);
 	polfs(3,cessbfus);
 	polfs(4,cessbcabin);
 	polfs(4,cessbcowl);
-	color(silver6);
+	setColor(silver6);
 	polfs(4,cessrgear);
 	polfs(4,cesslgear);
 	polfs(4,cessngear);
 
-	color(brown);
+	setColor(brown);
 	polfs(4,cessnose);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* below, right, front	*/
-	color(silver9);
+	glNewList(obj++, GL_COMPILE);	/* below, right, front	*/
+	setColor(silver9);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrfus);
 
-	color(silver8);
+	setColor(silver8);
 	polfs(6,cesswing);
 
-	color(grey9);
+	setColor(grey9);
 	polfs(4,cessws);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cessrwindow);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrcabin);
 	polfs(4,cesslcowl);
 	polfs(4,cessrcowl);
 
-	color(purple4);
+	setColor(purple4);
 	polfs(3,cessbfus);
 	polfs(4,cessbcabin);
 	polfs(4,cessbcowl);
-	color(silver6);
+	setColor(silver6);
 	polfs(4,cesslgear);
 	polfs(4,cessrgear);
 	polfs(4,cessngear);
 
-	color(brown);
+	setColor(brown);
 	polfs(4,cessnose);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* above, left, front	*/
-	color(silver6);
+	glNewList (obj++, GL_COMPILE);	/* above, left, front	*/
+	setColor(silver6);
 	polfs(4,cessrgear);
 	polfs(4,cesslgear);
 	polfs(4,cessngear);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslfus);
 	polfs(4,cesslcabin);
 
@@ -296,38 +381,38 @@ make_c150 (obj)
 	polfs(4,cessbcowl);
 	polfs(4,cesslcowl);
 
-	color(purple1);
+	setColor(purple1);
 	polfs(3,cesstfus);
 	polfs(4,cesstcowl);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cesslwindow);
-	color(grey9);
+	setColor(grey9);
 	polfs(4,cessws);
 
-	color(silver1);
+	setColor(silver1);
 	polfs(6,cesswing);
 
-	color(brown);
+	setColor(brown);
 	polfs(4,cessnose);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* above, right, front	*/
-	color(silver6);
+	glNewList(obj++,GL_COMPILE);	/* above, right, front	*/
+	setColor(silver6);
 	polfs(4,cesslgear);
 	polfs(4,cessrgear);
 	polfs(4,cessngear);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrfus);
 	polfs(4,cessrcabin);
 
@@ -335,173 +420,173 @@ make_c150 (obj)
 	polfs(4,cessbcowl);
 	polfs(4,cessrcowl);
 
-	color(purple1);
+	setColor(purple1);
 	polfs(3,cesstfus);
 	polfs(4,cesstcowl);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cessrwindow);
-	color (grey9);
+	setColor(grey9);
 	polfs(4,cessws);
 
-	color(silver1);
+	setColor(silver1);
 	polfs(6,cesswing);
 
-	color(brown);
+	setColor(brown);
 	polfs(4,cessnose);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* below, left, behind	*/
-	color(silver8);
+	glNewList(obj++, GL_COMPILE);	/* below, left, behind	*/
+	setColor(silver8);
 	polfs(6,cesswing);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cesslwindow);
 
-	color(purple1);
+	setColor(purple1);
 	polfs(3,cesstfus);
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrfus);
 
-	color(purple4);
+	setColor(purple4);
 	polfs(3,cessbfus);
 	polfs(4,cessbcabin);
 	polfs(4,cessbcowl);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslcowl);
 	polfs(4,cesslcabin);
 	polfs(4,cesslfus);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cesslstab);
 
-	color(silver6);
+	setColor(silver6);
 	polfs(4,cessrgear);
 	polfs(4,cesslgear);
 	polfs(4,cessngear);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* below, right, behind	*/
-	color(silver8);
+	glNewList(obj++, GL_COMPILE);	/* below, right, behind	*/
+	setColor(silver8);
 	polfs(6,cesswing);
 
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cessrwindow);
 
-	color(purple1);
+	setColor(purple1);
 	polfs(3,cesstfus);
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslfus);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrcowl);
 	polfs(4,cessrcabin);
 
-	color(purple4);
+	setColor(purple4);
 	polfs(3,cessbfus);
 	polfs(4,cessbcabin);
 	polfs(4,cessbcowl);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrfus);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver9);
+	setColor(silver9);
 	polfs(5,cessrstab);
 
-	color(silver6);
+	setColor(silver6);
 	polfs(4,cesslgear);
 	polfs(4,cessrgear);
 	polfs(4,cessngear);
-    closeobj();
+    glEndList();
 
-    makeobj (obj++);	/* above, left, behind	*/
-	color(silver6);
+	glNewList(obj++, GL_COMPILE);	/* above, left, behind	*/
+	setColor(silver6);
 	polfs(4,cessrgear);
 	polfs(4,cesslgear);
 	polfs(4,cessngear);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cessrfus);
 	polfs(4,cesslcowl);
 	polfs(4,cesslcabin);
 	polfs(4,cesslfus);
 
-	color(purple1);
+	setColor(purple1);
 	polfs(4,cesstcowl);
-	color(grey9);
+	setColor(grey9);
 	polfs(4,cessws);
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cesslwindow);
-	color(purple1);
+	setColor(purple1);
 	polfs(3,cesstfus);
 
-	color(silver1);
+	setColor(silver1);
 	polfs(6,cesswing);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cessrstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cesslstab);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);	/* above, right, behind	*/
-	color(silver6);
+	glNewList(obj++, GL_COMPILE);	/* above, right, behind	*/
+	setColor(silver6);
 	polfs(4,cesslgear);
 	polfs(4,cessrgear);
 	polfs(4,cessngear);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(4,cesslfus);
 	polfs(4,cessrcowl);
 	polfs(4,cessrcabin);
 	polfs(4,cessrfus);
 
-	color(purple1);
-	color(grey9);
+	setColor(purple1);
+	setColor(grey9);
 	polfs(4,cessws);
-	color(grey10);
+	setColor(grey10);
 	polfs(4,cessrwindow);
-	color(purple1);
+	setColor(purple1);
 
-	color(silver1);
+	setColor(silver1);
 	polfs(6,cesswing);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cesslstab);
 
-	color(purple3);
+	setColor(purple3);
 	polfs(5,cessfin);
 
-	color(silver3);
+	setColor(silver3);
 	polfs(5,cessrstab);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);		/* real far away	*/
-	color(purple3);
+	glNewList(obj++, GL_COMPILE);		/* real far away	*/
+	setColor(purple3);
 	polfs(4,cessff);
-	color(silver1);
+	setColor(silver1);
 	polfs(4,cessfw);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj++);		/* shadow	*/
-	color (black);
+	glNewList(obj++, GL_COMPILE);		/* shadow	*/
+	setColor(black);
 	setpattern(3);
 	polfs(6,cesswing);
 	polfs(5,cessfin);
@@ -518,13 +603,13 @@ make_c150 (obj)
 	polfs(4,cesslcowl);
 	polfs(4,cesstcowl);
 	setpattern(0);
-    closeobj ();
+    glEndList ();
 
-    makeobj (obj+100);		/* shadow far away	*/
-	color (black);
+	glNewList(obj+100, GL_COMPILE);		/* shadow far away	*/
+	setColor(black);
 	setpattern(3);
 	polfs(4,cessff);
 	polfs(4,cessfw);
 	setpattern(0);
-    closeobj ();
+    glEndList ();
 }

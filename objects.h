@@ -13,7 +13,12 @@
 /* objects			*/
 /* 0 => 8 reserved for plane views	*/
 /* 9 => 9+MEXPLODE reserved for explosion	*/
+#define mtn_dist 100
+#define mtn_left 100000
+
 #define EXPLOSION 9
+
+#define REPORT_CARD 20
 
 #define FOV_EDIT 40
 #define PUSH_IDENTITY 43
@@ -27,7 +32,7 @@
 #define CLEAR_REPORT_CARD 54
 #define RUNWAY_STRIPES 55
 #define FAKE_STRIPES 56
-
+#define BUILDINGS 57
 #define METER_OVERLAY 60
 #define HORIZON_METER 61
 #define HEADING_METER 62
@@ -52,7 +57,7 @@
 #define RHAWS_EDIT 107
 
 /* reserve BUILDING_OBJECTS to BUILDING_OBJECTS + MAX_BUILDINGS*4 */
-#define MAX_BUILDINGS 20
+#define MAX_BUILDINGS 5000000
 #define BUILDING_OBJECTS 125
 #define WHEEL_ANGLE 960
 #define LWHEEL_ANGLE 961
@@ -68,9 +73,37 @@
 #define F16W 1060
 #define P38W 1070
 
+#define HOUSE		4000
+#define HOUSES		4001
+#define TREE		4002
+#define TEXTCUBE	4003
+#define MYMOUNTAIN	4004
+
 #define C150_NAME "C-150"
 #define B747_NAME "B-747"
 #define F15_NAME "F-15"
 #define F16_NAME "F-16"
 #define F18_NAME "F-18"
 #define P38_NAME "P-38"
+
+#define PLANE_BIT 0x80000000	/* used to flag a plane pointer	*/
+#define TYPE_BUILDING 0
+#define TYPE_MOUNTAIN 1
+#define TYPE_THREAT 2
+#define TYPE_HOUSE 3
+#define TYPE_TREE 4
+
+#define AIR_STRIP	9999
+#define DEBUG_TEXT	9090
+#define HUD			9091
+#define COCKPIT		9092
+#define BUILDINGS_OFFSET 10000
+void make_my_building(int obj, int col, int llx, int lly, int llz, int dx, int dy, int dz, float segments);
+void make_house();
+void make_tree();
+void init_textures();
+void init_light(float sunpos);
+void free_camera(struct gameState *gs);
+void make_textures_cube();
+void create_pattern();
+void make_mountain_zone(int x, int y, int size, struct gameState *gs);

@@ -10,8 +10,7 @@
  *									  *
  **************************************************************************/
 
-#include "gl.h"
-#include "flight.h"
+#include "planes.h"
 #include "f16_defs.h"
 #include "objects.h"
 
@@ -22,11 +21,8 @@
  	MAKE 8 OBJECTS DEFINITION FILE 
 ############################################################################*/
 
-make_f16w(obj)
-	Object obj;
-{
-        pushmatrix();
-
+void make_f16w(GLuint obj) {
+    
 	makeobj(WHEEL_ANGLE);
 	maketag(1);
 	rotate(0,'x');
@@ -160,7 +156,7 @@ polf (5, f16_right_front_wing);
 pushmatrix();
 translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (12, f16_ORWA);               /*   BLF   */ 
 polf (4, f16_RW3A); 
 polf (4, f16_RW1A); 
@@ -282,7 +278,7 @@ translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_LSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -322,7 +318,7 @@ polf (6, f16_SCOOP_front_left);
 pushmatrix();
 translate(FW_ORIGIN);
 callobj(FWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -441,7 +437,7 @@ polf (5, f16_left_front_wing);
 pushmatrix();
 translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -559,7 +555,7 @@ translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_RSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 
@@ -605,7 +601,7 @@ callobj(FWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_FSPAR1); 
 polf (3, f16_FSPAR2); 
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -636,7 +632,7 @@ polf (4, f16_right_back_wing);           /*  ALF  */
 pushmatrix();
 translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 
@@ -662,7 +658,7 @@ polf (3, f16_right_missle_xz1);
 pushmatrix();
 translate(FW_ORIGIN);
 callobj(FWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -694,7 +690,7 @@ translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
 	color (silver8);  /* ALF */
 polf (3, f16_LSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -907,7 +903,7 @@ polf (4, f16_left_back_wing);
 pushmatrix();
 translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -939,7 +935,7 @@ callobj(FWHEEL_ANGLE);
 	color (silver8);                     /* ARF */
 polf (3, f16_FSPAR1); 
 polf (3, f16_FSPAR2); 
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -965,7 +961,7 @@ translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_RSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 
@@ -1385,7 +1381,7 @@ polf (4, f16_FG_top);
 pushmatrix();
 translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 
@@ -1409,7 +1405,7 @@ polf (4, f16_FG_left_3);
 pushmatrix();
 translate(FW_ORIGIN);
 callobj(FWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -1439,7 +1435,7 @@ translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_LSPARA); 
-	color (BLACK);                /*  BLB  */ 
+	color (black);                /*  BLB  */ 
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -1667,7 +1663,7 @@ polf (4, f16_FG_left_3);
 pushmatrix();
 translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A);                  /*  BRB  */ 
 polf (4, f16_LW3A); 
@@ -1695,7 +1691,7 @@ callobj(FWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_FSPAR1); 
 polf (3, f16_FSPAR2); 
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -1720,7 +1716,7 @@ translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_RSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 
@@ -1749,7 +1745,7 @@ makeobj(obj++);		/* view[6] ABOVE_LEFT_BEHIND */
 pushmatrix();
 translate(FW_ORIGIN);
 callobj(FWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -1784,7 +1780,7 @@ polf (5, f16_right_front_wing);
 pushmatrix();
 translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A);                 /*  ALB  */ 
@@ -1897,7 +1893,7 @@ translate(LW_ORIGIN);
 callobj(LWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_LSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -2040,7 +2036,7 @@ callobj(FWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_FSPAR1); 
 polf (3, f16_FSPAR2); 
-	color (BLACK);
+	color (black);
 polf (12, f16_RFW); 
 polf (4, f16_FW2); 
 polf (4, f16_FW1); 
@@ -2070,7 +2066,7 @@ polf (5, f16_left_front_wing);
 pushmatrix();
 translate(LW_ORIGIN);                 /*  ARB  */ 
 callobj(LWHEEL_ANGLE);
-	color (BLACK);
+	color (black);
 polf (4, f16_LW2A); 
 polf (4, f16_LW1A); 
 polf (4, f16_LW3A); 
@@ -2184,7 +2180,7 @@ translate(RW_ORIGIN);
 callobj(RWHEEL_ANGLE);
 	color (silver8);
 polf (3, f16_RSPARA); 
-	color (BLACK);
+	color (black);
 polf (4, f16_RW1A); 
 polf (4, f16_RW3A); 
 polf (4, f16_RW2A); 

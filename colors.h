@@ -9,25 +9,30 @@
  *  in part, without the prior written consent of Silicon Graphics, Inc.  *
  *									  *
  **************************************************************************/
+#pragma once
+#ifndef MYCOLOR
+#define MYCOLOR
+#include "graph.h"
+#include "objects.h"
 
 #define black 0
 #define brown 1
 #define orange 2
 #define blue 4
 #define red 8
+#define cyan 9
 #define white 12
 #define green 15
 
-#define grey2 3
-#define grey5 7
-#define grey8 11
-
 #define grey0 16
 #define grey1 17
+#define grey2 3
 #define grey3 18
 #define grey4 19
+#define grey5 7
 #define grey6 20
 #define grey7 21
+#define grey8 11
 #define grey9 22
 #define grey10 23
 #define grey11 24
@@ -58,7 +63,20 @@
 #define dirt 62
 #define skyblue 63
 
-#define bgrey 0
+#define bgrey 16
 #define blime 1
 #define borange 2
 #define btan 3
+
+
+#define green1 70
+static GLfloat floatingColor[300][4];
+static short building_shade[300][5];
+
+void init_palette();
+void mapcolor(int c, int r, int v, int b);
+void setColor(int c);
+void setClearColor(int c);
+void map_daynight(int daytime);
+void dimColor(int c);
+#endif

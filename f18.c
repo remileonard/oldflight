@@ -10,211 +10,271 @@
  *									  *
  **************************************************************************/
 
-/* contains plane definitions	*/
-#include "flight.h"
+ /* contains plane definitions	*/
+#include "planes.h"
+
 
 /************************************************************
 /*	F-18 plane definition
 /************************************************************/
-static float fakewing[][3] = {
-    {0,0,-38},
-    {20,0,12},
-    {-20,0,12},
+static GLfloat fakewing[][3] = {
+	{0, 0, -38},
+	{20, 0, 12},
+	{-20, 0, 12},
 };
-static float fakestab[][3] = {
-    {0,0,0},
-    {0,10,12},
-    {0,0,12}
+static GLfloat fakestab[][3] = { 
+	{0, 0, 0}, 
+	{0, 10, 12}, 
+	{0, 0, 12},
 };
-static float rightfire[][3] = {
-    {1.0,1.5,16.0},
-    {1.6,2.25,16.0},
-    {2.4,2.25,16.0},
-    {3.0,1.5,16.0},
-    {2.4,.75,16.0},
-    {1.6,.75,16.0},
+static GLfloat rightfire[][3] = {
+	{1.6f, .75f, 16.0f},
+	{2.4f, .75f, 16.0f},
+	{3.0f, 1.5f, 16.0f},
+	{2.4f, 2.25f, 16.0f},
+	{1.6f, 2.25f, 16.0f},
+	{1.0f, 1.5f, 16.0f},
 };
-static float leftfire[][3] = {
-    {-1.0,1.5,16.0},
-    {-1.6,2.25,16.0},
-    {-2.4,2.25,16.0},
-    {-3.0,1.5,16.0},
-    {-2.4,.75,16.0},
-    {-1.6,.75,16.0},
-};
-
-static float rightwing[][3] = {
-    {4,3,-8},
-    {20,3,-1},
-    {20,3,4},
-    {4,3,5},
-};
-static float leftwing[][3] = {
-    {-4,3,-8},
-    {-20,3,-1},
-    {-20,3,4},
-    {-4,3,5},
-};
-static float rightchine[][3] = {
-    {1.5,3,-22},
-    {4,3,-11},
-    {4,3,-8},
-    {1.5,3,-8},
-};
-static float leftchine[][3] = {
-    {-1.5,3,-22},
-    {-4,3,-11},
-    {-4,3,-8},
-    {-1.5,3,-8},
+static GLfloat leftfire[][3] = {
+	{-1.0f, 1.5f, 16.0f},
+	{-1.6f, 2.25f, 16.0f},
+	{-2.4f, 2.25f, 16.0f},
+	{-3.0f, 1.5f, 16.0f},
+	{-2.4f, .75f, 16.0f},
+	{-1.6f, .75f, 16.0f},
 };
 
-static float rightrudder[][3] = {
-    {3,3,2},
-    {6,10,8},
-    {6,10,12},
-    {3,3,11},
+static GLfloat rightwing[][3] = {
+	{4, 3, 5},
+	{20, 3, 4},
+	{20, 3, -1},
+	{4, 3, -8},
 };
-static float leftrudder[][3] = {
-    {-3,3,2},
-    {-6,10,8},
-    {-6,10,12},
-    {-3,3,11},
-};
-
-static float rightelevator[][3] = {
-    {4,2,8},
-    {11,2,15},
-    {11,2,17},
-    {10,2,18},
-    {4,2,15},
-};
-static float leftelevator[][3] = {
-    {-4,2,8},
-    {-11,2,15},
-    {-11,2,17},
-    {-10,2,18},
-    {-4,2,15},
+static GLfloat leftwing[][3] = {
+	{-4, 3, -8},
+	{-20, 3, -1},
+	{-20, 3, 4},
+	{-4, 3, 5},
 };
 
-static float topback[][3] = {
-    {-4,3,-8},
-    {4,3,-8},
-    {4,3,16},
-    {-4,3,16},
+static GLfloat brightwing[][3] = {
+	{4, 3, -8},
+	{20, 3, -1},
+	{20, 3, 4},
+	{4, 3, 5},
 };
-static float rightback[][3] = {
-    {4,3,-8},
-    {4,3,16},
-    {4,0,16},
-    {4,0,-8},
-};
-static float leftback[][3] = {
-    {-4,3,-8},
-    {-4,3,16},
-    {-4,0,16},
-    {-4,0,-8},
-};
-static float bottomback[][3] = {
-    {-4,0,-8},
-    {4,0,-8},
-    {4,0,16},
-    {-4,0,16},
-};
-static float backback[][3] = {
-    {-4,3,16},
-    {4,3,16},
-    {4,0,16},
-    {-4,0,16},
-};
-static float frontback[][3] = {
-    {-4,3,-8},
-    {4,3,-8},
-    {4,0,-8},
-    {-4,0,-8},
+static GLfloat bleftwing[][3] = {
+	{-4, 3, 5},
+	{-20, 3, 4},
+	{-20, 3, -1},
+	{-4, 3, -8},
 };
 
-static float bottomfront[][3] = {
-    {1.5,0,-32},
-    {1.5,0,-8},
-    {-1.5,0,-8},
-    {-1.5,0,-32},
+static GLfloat brightchine[][3] = {
+	{1.5, 3, -22},
+	{4, 3, -11},
+	{4, 3, -8},
+	{1.5, 3, -8},
 };
-static float rightfront[][3] = {
-    {1.5,0,-32},
-    {1.5,0,-8},
-    {1.5,4.7272,-8},
-    {1.5,5,-14},
-    {1.5,2.2,-32},
+static GLfloat bleftchine[][3] = {
+	{-1.5, 3, -8},
+	{-4, 3, -8},
+	{-4, 3, -11},
+	{-1.5, 3, -22},
 };
-static float leftfront[][3] = {
-    {-1.5,0,-32},
-    {-1.5,0,-8},
-    {-1.5,4.7272,-8},
-    {-1.5,5,-14},
-    {-1.5,2.2,-32},
+
+static GLfloat rightchine[][3] = {
+	{1.5, 3, -8},
+	{4, 3, -8},
+	{4, 3, -11},
+	{1.5, 3, -22},
 };
-static float rightnose[][3] = {
-    {0,.6,-38},
-    {1.5,0,-32},
-    {1.5,2.2,-32},
+static GLfloat leftchine[][3] = {
+	{-1.5, 3, -22},
+	{-4, 3, -11},
+	{-4, 3, -8},
+	{-1.5, 3, -8},
 };
-static float leftnose[][3] = {
-    {0,.6,-38},
-    {-1.5,0,-32},
-    {-1.5,2.2,-32},
+
+static GLfloat rightrudder[][3] = {
+	{3, 3, 11},
+	{6, 10, 12},
+	{6, 10, 8},
+	{3, 3, 2},
 };
-static float topnose[][3] = {
-    {0,.6,-38},
-    {1.5,2.2,-32},
-    {-1.5,2.2,-32},
+static GLfloat leftrudder[][3] = {
+	{-3, 3, 11},
+	{-6, 10, 12},
+	{-6, 10, 8},
+	{-3, 3, 2},
 };
-static float botnose[][3] = {
-    {0,.6,-38},
-    {1.5,0,-32},
-    {-1.5,0,-32},
+
+static GLfloat brightrudder[][3] = {
+	{3, 3, 2},
+	{6, 10, 8},
+	{6, 10, 12},
+	{3, 3, 11},
 };
-static float frontbubble[][3] = {
-    {-1.5,2.2,-32},
-    {-1.5,5,-14},
-    {1.5,5,-14},
-    {1.5,2.2,-32},
+static GLfloat bleftrudder[][3] = {
+	{-3, 3, 2},
+	{-6, 10, 8},
+	{-6, 10, 12},
+	{-3, 3, 11},
 };
-static float topbubble[][3] = {
-    {-1.5,5,-14},
-    {-1.5,4.7272,-8},
-    {0,3,8},
-    {1.5,4.7272,-8},
-    {1.5,5,-14},
+
+
+static GLfloat rightelevator[][3] = {
+	{4, 2, 15}, 
+	{10, 2, 18}, 
+	{11, 2, 17}, 
+	{11, 2, 15}, 
+	{4, 2, 8},
 };
-static float rightbubble[][3] = {
-    {1.5,4.7272,-8},
-    {0,3,8},
-    {1.5,3,-8},
+static GLfloat leftelevator[][3] = {
+	{-4, 2, 8}, 
+	{-11, 2, 15}, 
+	{-11, 2, 17}, 
+	{-10, 2, 18}, 
+	{-4, 2, 15},
 };
-static float leftbubble[][3] = {
-    {-1.5,4.7272,-8},
-    {0,3,8},
-    {-1.5,3,-8},
+
+static GLfloat brightelevator[][3] = {
+	{4, 2, 8},
+	{11, 2, 15},
+	{11, 2, 17},
+	{10, 2, 18},
+	{4, 2, 15},
 };
-static float pit1[][3] = {
-    {0,3.14,-26},
-    {1.5,4,-21},
-    {0,6,-21},
+static GLfloat bleftelevator[][3] = {
+	{-4, 2, 15},
+	{-10, 2, 18},
+	{-11, 2, 17},
+	{-11, 2, 15},
+	{-4, 2, 8},
 };
-static float pit2[][3] = {
-    {0,3.14,-26},
-    {-1.5,4,-21},
-    {0,6,-21},
+
+static GLfloat topback[][3] = {
+	{4, 3, -8},
+	{-4, 3, -8},
+	{-4, 3, 16},
+	{4, 3, 16},
 };
-static float pit3[][3] = {
-    {0,5,-14},
-    {1.5,4,-21},
-    {0,6,-21},
+static GLfloat rightback[][3] = {
+	{4, 3, -8},
+	{4, 3, 16},
+	{4, 0, 16},
+	{4, 0, -8},
 };
-static float pit4[][3] = {
-    {0,5,-14},
-    {-1.5,4,-21},
-    {0,6,-21},
+static GLfloat leftback[][3] = {
+	{-4, 0, -8},
+	{-4, 0, 16},
+	{-4, 3, 16},
+	{-4, 3, -8},
+};
+static GLfloat bottomback[][3] = {
+	{-4, 0, -8},
+	{4, 0, -8},
+	{4, 0, 16},
+	{-4, 0, 16},
+};
+static GLfloat backback[][3] = {
+	{-4, 0, 16},
+	{4, 0, 16},
+	{4, 3, 16},
+	{-4, 3, 16},
+};
+static GLfloat frontback[][3] = {
+	{-4, 3, -8},
+	{4, 3, -8},
+	{4, 0, -8},
+	{-4, 0, -8},
+};
+
+static GLfloat bottomfront[][3] = {
+	{1.5, 0, -32},
+	{1.5, 0, -8},
+	{-1.5, 0, -8},
+	{-1.5, 0, -32},
+};
+static GLfloat rightfront[][3] = {
+	{1.5f, 2.2f, -32}, 
+	{1.5f, 5, -14}, 
+	{1.5f, 4.7272f, -8},
+	{1.5f, 0, -8},    
+	{1.5f, 0, -32},
+};
+static GLfloat leftfront[][3] = {
+	{-1.5f, 0, -32}, 
+	{-1.5f, 0, -8},    
+	{-1.5f, 4.7272f, -8},
+	{-1.5f, 5, -14}, 
+	{-1.5f, 2.2f, -32},
+};
+static GLfloat rightnose[][3] = {
+	{1.5f, 2.2f, -32},
+	{1.5f, 0, -32},
+	{0, .6f, -38},
+};
+static GLfloat leftnose[][3] = {
+	{-1.5f, 2.2f, -32},
+	{0, .6f, -38},
+	{-1.5f, 0, -32},
+
+};
+static GLfloat topnose[][3] = {
+	{1.5f, 2.2f, -32},
+	{0, .6f, -38},
+	{-1.5f, 2.2f, -32},
+
+};
+static GLfloat botnose[][3] = {
+	{0, .6f, -38},
+	{1.5f, 0, -32},
+	{-1.5f, 0, -32},
+};
+static GLfloat frontbubble[][3] = {
+	{-1.5f, 2.2f, -32},
+	{-1.5f, 5, -14},
+	{1.5f, 5, -14},
+	{1.5f, 2.2f, -32},
+};
+static GLfloat topbubble[][3] = {
+	{-1.5f, 5, -14},
+	{-1.5f, 4.7272f, -8},
+	{0, 3, 8},
+	{1.5f, 4.7272f, -8},
+	{1.5f, 5, -14},
+};
+static GLfloat rightbubble[][3] = {
+	{1.5f, 4.7272f, -8},
+	{0, 3, 8},
+	{1.5f, 3, -8},
+};
+static GLfloat leftbubble[][3] = {
+	{-1.5f, 3, -8},
+	{0, 3, 8},
+	{-1.5f, 4.7272f, -8},
+};
+static GLfloat pit1[][3] = {
+	{0, 3.14f, -26},
+	{0, 6, -21},
+	{1.5, 4, -21},
+
+};
+static GLfloat pit2[][3] = {
+	{0, 3.14f, -26},
+	{-1.5f, 4, -21},
+	{0, 6, -21},
+};
+static GLfloat pit3[][3] = {
+	{0, 5, -14},
+	{1.5f, 4, -21},
+	{0, 6, -21},
+};
+static GLfloat pit4[][3] = {
+	{0, 6, -21},
+	{-1.5f, 4, -21},
+	{0, 5, -14},
 };
 
 #define C_TOPNOSE silver4
@@ -231,540 +291,1991 @@ static float pit4[][3] = {
 #define C_UNDERWING silver8
 #define C_UNDERBODY silver9
 
-make_f18 (obj)
-    register Object obj;
-{
-    makeobj (obj++);	/* below, left, front	*/
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-	color (silver6);
-	polf (3,leftbubble);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
+void make_f18(GLuint obj) {
 
-	color (C_UNDERWING);
-	polf (5,rightelevator);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	    color (green0);
-	    pnts (19,3,-1);
-	    color (red);
-	    pnts (-19,3,-1);
-	color (brown);
-	polf (4,frontback);
-	color (C_LEFTNOSE);
-	polf (3,rightnose);
-	polf (4,leftback);
-	color (C_UNDERWING);
-	polf (5,leftelevator);
+	float mat_logo_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	float mat_logo_diffuse[] = { 0.5f, 0.4f, 0.7f, 1.0f };
+	float mat_logo_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float mat_logo_shininess[] = { 30.0 };
 
- 	polf (4,rightchine);
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT4);
-	polf (3,pit4);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (silver5);
-	polf (5,leftfront);
-	color (C_UNDERWING);
- 	polf (4,leftchine);
+	glNewList(obj, GL_COMPILE);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	setColor(silver5);
+	setColor(C_TOPBACK);
+	draw_poly(rightwing, 4, 0);
+	draw_poly(leftwing, 4, 0);
+	setColor(C_UNDERWING);
+	draw_poly(brightwing, 4, 0);
+	draw_poly(bleftwing, 4, 0);
+	setColor(C_TOPBACK);
+	draw_poly(rightelevator, 5, 0);
+	draw_poly(leftelevator, 5, 0);
+	setColor(C_UNDERWING);
+	draw_poly(brightelevator, 5, 0);
+	draw_poly(bleftelevator, 5, 0);
 
-	color (C_TOPNOSE);
-	polf (3,topnose);
-	color (C_LEFTNOSE);
-	polf (3,leftnose);
+	setColor(C_RIGHTRUDDER);
+	draw_poly(rightrudder, 4, 0);
+	draw_poly(brightrudder, 4, 0);
 
-	color (C_UNDERBODY);
-	polf (4,bottomback);
-	polf (4,bottomfront);
-	polf (3,botnose);
-    closeobj ();
+	setColor(C_LEFTRUDDER);
+	draw_poly(leftrudder, 4, 0);
+	draw_poly(bleftrudder, 4, 0);
 
-    makeobj (obj++);	/* below, right, front	*/
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-	color (silver6);
-	polf (3,rightbubble);
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
+	setColor(C_TOPBACK);
+	draw_poly(rightchine, 4, 0);
+	draw_poly(leftchine, 4, 0);
 
-	color (C_UNDERWING);
-	polf (5,leftelevator);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	    color (red);
-	    pnts (-19,3,-1);
-	    color (green0);
-	    pnts (19,3,-1);
-	color (brown);
-	polf (4,frontback);
-	color (C_LEFTNOSE);
-	polf (3,leftnose);
-	polf (4,rightback);
-	color (C_UNDERWING);
-	polf (5,rightelevator);
+	setColor(C_UNDERWING);
+	draw_poly(brightchine, 4, 0);
+	draw_poly(bleftchine, 4, 0);
 
- 	polf (4,leftchine);
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT3);
-	polf (3,pit3);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (silver5);
-	polf (5,rightfront);
-	color (C_UNDERWING);
- 	polf (4,rightchine);
+	setColor(C_LEFTNOSE);
+	draw_poly(rightfront, 5, 0);
+	draw_poly(leftfront, 5, 0);
+	setColor(C_UNDERBODY);
+	draw_poly(bottomfront, 4, 0);
 
-	color (C_TOPNOSE);
-	polf (3,topnose);
-	color (C_LEFTNOSE);
-	polf (3,rightnose);
+	setColor(C_FRONTBUBBLE);
+	draw_poly(frontbubble, 4, 0);
+	setColor(C_TOPBUBBLE);
+	draw_poly(topbubble, 5, 0);
+	setColor(C_LEFTNOSE);
+	draw_poly(rightbubble, 3, 0);
+	draw_poly(leftbubble, 3, 0);
 
-	color (C_UNDERBODY);
-	polf (4,bottomback);
-	polf (4,bottomfront);
-	polf (3,botnose);
-    closeobj ();
+	setColor(C_UNDERBODY);
+	draw_poly(rightback, 4, 0);
+	draw_poly(leftback, 4, 0);
+	setColor(C_TOPBACK);
+	draw_poly(topback, 4, 0);
+	setColor(brown);
+	draw_poly(frontback, 4, 0);
+	setColor(C_UNDERBODY);
+	draw_poly(bottomback, 4, 0);
+	setColor(brown);
+	draw_poly(backback, 4, 0);
 
-    makeobj (obj++);	/* above, left, front	*/
-	color (silver0);
-	polf (5,rightelevator);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	    color (green0);
-	    pnts (19,3,-1);
-	color (brown);
-	polf (4,frontback);
-	color (C_LEFTNOSE);
-	polf (4,leftback);
-	color (silver0);
-	polf (5,leftelevator);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	    color (red);
-	    pnts (-19,3,-1);
-	color (C_TOPBACK);
-	polf (4,topback);
+	setColor(C_LEFTNOSE);
+	draw_poly(rightnose, 3, 0);
+	draw_poly(leftnose, 3, 0);
+	setColor(C_TOPNOSE);
+	draw_poly(topnose, 3, 0);
+	setColor(C_UNDERBODY);
+	draw_poly(botnose, 3, 0);
 
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-	color (silver2);
- 	polf (4,rightchine);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (silver6);
-	polf (3,leftbubble);
+	setColor(C_PIT3);
+	draw_poly(pit3, 3, 0);
+	setColor(C_PIT4);
+	draw_poly(pit4, 3, 0);
+	setColor(C_PIT1);
+	draw_poly(pit1, 3, 0);
+	setColor(C_PIT2);
+	draw_poly(pit2, 3, 0);
 
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-	color (silver5);
-	polf (5,leftfront);
-	color (silver2);
- 	polf (4,leftchine);
+	setColor(orange);
+	draw_poly(leftfire, 6, 0);
+	draw_poly(rightfire, 6, 0);
 
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT3);
-	polf (3,pit3);
-	color (C_PIT4);
-	polf (3,pit4);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (C_PIT2);
-	polf (3,pit2);
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
 
-	color (C_UNDERBODY);
-	polf (3,botnose);
-	color (C_LEFTNOSE);
-	polf (3,rightnose);
-	polf (3,leftnose);
-	color (C_TOPNOSE);
-	polf (3,topnose);
-    closeobj ();
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
 
-    makeobj (obj++);	/* above, right, front	*/
-	color (silver0);
-	polf (5,leftelevator);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	    color (red);
-	    pnts (-19,3,-1);
-	color (brown);
-	polf (4,frontback);
-	color (C_LEFTNOSE);
-	polf (4,rightback);
-	color (silver0);
-	polf (5,rightelevator);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	    color (green0);
-	    pnts (19,3,-1);
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
 
-	color (C_TOPBACK);
-	polf (4,topback);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-	color (silver2);
- 	polf (4,leftchine);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (silver6);
-	polf (3,rightbubble);
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
 
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-	color (silver5);
-	polf (5,rightfront);
-	color (silver2);
- 	polf (4,rightchine);
+	setColor(C_UNDERBODY);
+	glBegin(GL_LINE_STRIP);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
 
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT4);
-	polf (3,pit4);
-	color (C_PIT3);
-	polf (3,pit3);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (C_PIT1);
-	polf (3,pit1);
+	glBegin(GL_LINE_STRIP);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
 
-	color (C_UNDERBODY);
-	polf (3,botnose);
-	color (C_LEFTNOSE);
-	polf (3,leftnose);
-	polf (3,rightnose);
-	color (C_TOPNOSE);
-	polf (3,topnose);
-    closeobj ();
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_NORMALIZE);
+	glEndList();
 
-    makeobj (obj++);	/* below, left, behind	*/
-	color (C_LEFTNOSE);
-	polf (3,leftnose);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (C_PIT3);
-	polf (3,pit3);
-	color (C_PIT4);
-	polf (3,pit4);
-
-	color (C_UNDERWING);
- 	polf (4,rightchine);
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (silver6);
-	polf (3,rightbubble);
-	polf (3,leftbubble);
-
-	color (silver5);
-	polf (5,leftfront);
-	color (C_UNDERWING);
- 	polf (4,leftchine);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-
-	color (C_UNDERWING);
-	polf (5,rightelevator);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	    color (green0);
-	    pnts (19,3,-1);
-	    color (red);
-	    pnts (-19,3,-1);
-
-	color (C_LEFTNOSE);
-	polf (4,leftback);
-	color (C_UNDERWING);
-	polf (5,leftelevator);
-
-	color (C_UNDERBODY);
-	polf (3,botnose);
-	polf (4,bottomfront);
-	polf (4,bottomback);
-	color (brown);
-	polf (4,backback);
-	color (orange);
-	polf (6,leftfire);
-	polf (6,rightfire);
-    closeobj ();
-
-    makeobj (obj++);	/* below, right, behind	*/
-	color (C_LEFTNOSE);
-	polf (3,rightnose);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (C_PIT4);
-	polf (3,pit4);
-	color (C_PIT3);
-	polf (3,pit3);
-
-	color (C_UNDERWING);
- 	polf (4,leftchine);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (silver6);
-	polf (3,leftbubble);
-	polf (3,rightbubble);
-
-	color (silver5);
-	polf (5,rightfront);
-	color (C_UNDERWING);
- 	polf (4,rightchine);
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-
-	color (C_UNDERWING);
-	polf (5,leftelevator);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	    color (red);
-	    pnts (-19,3,-1);
-	    color (green0);
-	    pnts (19,3,-1);
-
-	color (C_LEFTNOSE);
-	polf (4,rightback);
-	color (C_UNDERWING);
-	polf (5,rightelevator);
-
-	color (C_UNDERBODY);
-	polf (3,botnose);
-	polf (4,bottomfront);
-	polf (4,bottomback);
-	color (brown);
-	polf (4,backback);
-	color (orange);
-	polf (6,leftfire);
-	polf (6,rightfire);
-    closeobj ();
-
-    makeobj (obj++);	/* above, left, behind	*/
-	color (silver2);
- 	polf (4,rightchine);
-	color (C_LEFTNOSE);
-	polf (3,leftnose);
-	color (C_TOPNOSE);
-	polf (3,topnose);
-
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (C_PIT3);
-	polf (3,pit3);
-	color (C_PIT4);
-	polf (3,pit4);
-
-	color (silver5);
-	polf (5,leftfront);
-	color (silver2);
- 	polf (4,leftchine);
-
-	color (silver0);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	polf (5,rightelevator);
-	    color (green0);
-	    pnts (19,3,-1);
-
-	color (C_LEFTNOSE);
-	polf (4,leftback);
-	color (silver0);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	polf (5,leftelevator);
-	    color (red);
-	    pnts (-19,3,-1);
-
-	color (C_TOPBACK);
-	polf (4,topback);
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-	color (silver6);
-	polf (3,rightbubble);
-	polf (3,leftbubble);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-
-	color (brown);
-	polf (4,backback);
-	color (orange);
-	polf (6,leftfire);
-	polf (6,rightfire);
-    closeobj ();
-
-    makeobj (obj++);	/* above, right, behind	*/
-	color (silver2);
- 	polf (4,leftchine);
-	color (C_LEFTNOSE);
-	polf (3,rightnose);
-	color (C_TOPNOSE);
-	polf (3,topnose);
-
-	color (C_FRONTBUBBLE);
-	polf (4,frontbubble);
-	color (C_PIT2);
-	polf (3,pit2);
-	color (C_PIT1);
-	polf (3,pit1);
-	color (C_PIT4);
-	polf (3,pit4);
-	color (C_PIT3);
-	polf (3,pit3);
-
-	color (silver5);
-	polf (5,rightfront);
-	color (silver2);
- 	polf (4,rightchine);
-
-	color (silver0);
-	polf (4,leftwing);
-	    moves (-20,3,4);
-	    draws (-20,3,-5);
-	polf (5,leftelevator);
-	    color (red);
-	    pnts (-19,3,-1);
-
-	color (C_LEFTNOSE);
-	polf (4,rightback);
-	color (silver0);
-	polf (4,rightwing);
-	    moves (20,3,4);
-	    draws (20,3,-5);
-	polf (5,rightelevator);
-	    color (green0);
-	    pnts (19,3,-1);
-
-	color (C_TOPBACK);
-	polf (4,topback);
-	color (C_LEFTRUDDER);
-	polf (4,leftrudder);
-	    color (white);
-	    pnts (-5,8,12);
-	color (silver6);
-	polf (3,rightbubble);
-	polf (3,leftbubble);
-	color (C_TOPBUBBLE);
-	polf (5,topbubble);
-	color (C_RIGHTRUDDER);
-	polf (4,rightrudder);
-	    color (red);
-	    pnts (5,8,12);
-
-	color (brown);
-	polf (4,backback);
-	color (orange);
-	polf (6,leftfire);
-	polf (6,rightfire);
-    closeobj ();
-
-    makeobj (obj++);		/* real far away	*/
-	color (silver4);
-	polf (3,fakewing);
-	color (silver7);
-	polf (3,fakestab);
-	color (orange);
-	polf (6,leftfire);
-	polf (6,rightfire);
-	    color (white);
-	    pnt (-5,8,12);
-	    color (green0);
-	    pnts (19,3,-1);
-    closeobj ();
-
-    makeobj (obj++);		/* shadow	*/
-	color (black);
+	/* shadow	*/
+	glNewList(obj+9, GL_COMPILE); 
+	setColor(black);
 	setpattern(3);
-	polf (4,rightwing);
-	polf (4,leftwing);
-	polf (5,rightelevator);
-	polf (5,leftelevator);
-	polf (4,rightrudder);
-	polf (4,leftrudder);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
 
-	polf (4,rightback);
-	polf (4,leftback);
-	polf (4,topback);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightback[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftback[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(topback[i]);
+		glEnd();
+	};
 
-	polf (5,rightfront);
-	polf (5,leftfront);
-	polf (4,frontbubble);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
 
-	polf (3,rightnose);
-	polf (3,leftnose);
-	polf (3,topnose);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
 	setpattern(0);
-    closeobj ();
+	glEndList();
 
-    makeobj (obj+100);		/* shadow far away	*/
-	color (black);
+	/* shadow far away	*/
+	glNewList(obj + 100, GL_COMPILE);
+	setColor(black);
 	setpattern(3);
-	polf (3,fakestab);
-	polf (3,fakewing);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(fakewing[i]);
+		glEnd();
+	};
 	setpattern(0);
-    closeobj ();
+	glEndList();
+}
+void make_f18_old(GLuint obj) {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glNewList(obj++, GL_COMPILE); /* below, left, front	*/
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftback[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftfront[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomback[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* below, right, front	*/
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightback[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightfront[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomback[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* above, left, front	*/
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftback[i]);
+		glEnd();
+	};
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+	setColor(C_TOPBACK);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(topback[i]);
+		glEnd();
+	};
+
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftfront[i]);
+		glEnd();
+	};
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* above, right, front	*/
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightback[i]);
+		glEnd();
+	};
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+
+	setColor(C_TOPBACK);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(topback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightfront[i]);
+		glEnd();
+	};
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* below, left, behind	*/
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftfront[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftback[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomback[i]);
+		glEnd();
+	};
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(backback[i]);
+		glEnd();
+	};
+	setColor(orange);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(leftfire[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(rightfire[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* below, right, behind	*/
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightfront[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	glEnd();
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightback[i]);
+		glEnd();
+	};
+	setColor(C_UNDERWING);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+
+	setColor(C_UNDERBODY);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(botnose[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomfront[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(bottomback[i]);
+		glEnd();
+	};
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(backback[i]);
+		glEnd();
+	};
+	setColor(orange);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(leftfire[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(rightfire[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* above, left, behind	*/
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftnose[i]);
+		glEnd();
+	};
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftfront[i]);
+		glEnd();
+	};
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glEnd();
+	glVertex3s(20, 3, -5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftback[i]);
+		glEnd();
+	};
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+
+	setColor(C_TOPBACK);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(topback[i]);
+		glEnd();
+	};
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(backback[i]);
+		glEnd();
+	};
+	setColor(orange);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(leftfire[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(rightfire[i]);
+		glEnd();
+	};
+	// glEndList();
+
+	// glNewList(obj++, GL_COMPILE);	/* above, right, behind	*/
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftchine[i]);
+		glEnd();
+	};
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightnose[i]);
+		glEnd();
+	};
+	setColor(C_TOPNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(topnose[i]);
+		glEnd();
+	};
+
+	setColor(C_FRONTBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(frontbubble[i]);
+		glEnd();
+	};
+	setColor(C_PIT2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit2[i]);
+		glEnd();
+	};
+	setColor(C_PIT1);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit1[i]);
+		glEnd();
+	};
+	setColor(C_PIT4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit4[i]);
+		glEnd();
+	};
+	setColor(C_PIT3);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(pit3[i]);
+		glEnd();
+	};
+
+	setColor(silver5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightfront[i]);
+		glEnd();
+	};
+	setColor(silver2);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightchine[i]);
+		glEnd();
+	};
+
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(-20, 3, 4);
+	glVertex3s(-20, 3, -5);
+	glEnd();
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(leftelevator[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(-19, 3, -1);
+	glEnd();
+
+	setColor(C_LEFTNOSE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightback[i]);
+		glEnd();
+	};
+	setColor(silver0);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightwing[i]);
+		glEnd();
+	};
+	glBegin(GL_LINE);
+	glVertex3s(20, 3, 4);
+	glVertex3s(20, 3, -5);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(rightelevator[i]);
+		glEnd();
+	};
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+
+	setColor(C_TOPBACK);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(topback[i]);
+		glEnd();
+	};
+	setColor(C_LEFTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(leftrudder[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3s(-5, 8, 12);
+	glEnd();
+	setColor(silver6);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(rightbubble[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(leftbubble[i]);
+		glEnd();
+	};
+	setColor(C_TOPBUBBLE);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 5; i++)
+			glVertex3fv(topbubble[i]);
+		glEnd();
+	};
+	setColor(C_RIGHTRUDDER);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(rightrudder[i]);
+		glEnd();
+	};
+	setColor(red);
+	glBegin(GL_POINTS);
+	glVertex3s(5, 8, 12);
+	glEnd();
+
+	setColor(brown);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 4; i++)
+			glVertex3fv(backback[i]);
+		glEnd();
+	};
+	setColor(orange);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(leftfire[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(rightfire[i]);
+		glEnd();
+	};
+	glEndList();
+
+	glNewList(obj++, GL_COMPILE); /* real far away	*/
+	setColor(silver4);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(fakewing[i]);
+		glEnd();
+	};
+	setColor(silver7);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 3; i++)
+			glVertex3fv(fakestab[i]);
+		glEnd();
+	};
+	setColor(orange);
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(leftfire[i]);
+		glEnd();
+	};
+	{
+		int i;
+		glBegin(GL_POLYGON);
+		for (i = 0; i < 6; i++)
+			glVertex3fv(rightfire[i]);
+		glEnd();
+	};
+	setColor(white);
+	glBegin(GL_POINTS);
+	glVertex3f(-5, 8, 12);
+	glEnd();
+	setColor(green0);
+	glBegin(GL_POINTS);
+	glVertex3s(19, 3, -1);
+	glEnd();
+	glEndList();
+
+
+
+
+	
 }

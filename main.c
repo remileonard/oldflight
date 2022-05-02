@@ -1,378 +1,634 @@
-/**************************************************************************
- *									  *
- *  Copyright (C)  1988 Silicon Graphics, Inc.	  *
- *									  *
- *  These coded instructions, statements, and computer programs  contain  *
- *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *
- *  are protected by Federal copyright law.  They  may  not be disclosed  *
- *  to  third  parties  or copied or duplicated in any form, in whole or  *
- *  in part, without the prior written consent of Silicon Graphics, Inc.  *
- *									  *
- **************************************************************************/
+﻿#include "main.h"
 
-/**************************************************************************
- *									  *
- * 		 Copyright (C) 1983, Silicon Graphics, Inc.		  *
- *									  *
- *  These coded instructions, statements, and computer programs  contain  *
- *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *
- *  are protected by Federal copyright law.  They  may  not be disclosed  *
- *  to  third  parties  or copied or duplicated in any form, in whole or  *
- *  in part, without the prior written consent of Silicon Graphics, Inc.  *
- *									  *
- **************************************************************************/
 
-#include "flight.h"
-
-Plane planes[MAX_PLANES];
-
-main (argc,argv)
-{
-	flight(argc,argv);
+void free_memory() {
+	if (lpp != NULL) {
+		free(lpp);
+		lpp = NULL;
+	}
 }
-
-reset_meters ()
-{
-    makeobj (RADAR);
-    closeobj ();
-    clear_report_card ();
-    if (!hud) {
-	callobj (CLEAR_TEXT_DISPLAY);
-	callobj (CLEAR_METERS);		/* clear all the meters		*/
-	callobj (CLEAR_FUEL_METER);
-	editobj (HORIZON_METER);
-	    objreplace (HORIZON_EDIT);
-	    rotate (0,'z');
-	    translate (0.0,0.0,0.0);
-	    objreplace (YAW_EDIT);
-	    translate (0.0,0.0,0.0);
-	closeobj ();
-	callobj (HORIZON_METER);
-    }
-}
-
-reset_fov (fov)
-    register int fov;
-{
-    float ar,sin,cos;
-
-    editobj (SETUP_WORLD);
-    objreplace (FOV_EDIT);
-    if (hud)
-    then ar = (XMAXSCREEN+1.0)/(YMAXSCREEN+1.0);
-    else ar = (XMAXSCREEN-1.0)/(YMAXSCREEN-YMIDDLE);
-    perspective (fov,ar,2.0,1.0e6);
-    closeobj ();
-    fov >>= 1;		/* half field of view	*/
-    gl_sincos (fov,&sin,&cos);
-    dist_for_lines = 25 * 200/3 * cos/sin;
-    if (hud) then dist_for_lines *= 2;
-    dist_for_lines >>= 5;
-    dist_for_lines *= dist_for_lines;
-}
-
-display_score ()
-{
-    register char *plane_name, **msg;
-    register int i;
-    register Plane p,*pp;
-    static char *score_msg[MAX_PLANES+6];
-
-    /* init the array first	*/
-    if (score_msg[0] == NULL) {
-	msg = score_msg;
-	*msg++ = "               Score Board";
-	*msg++ = " ";
-	*msg++ = "            Name Plane  Won Lost  Score";
-	*msg++ = "---------------- -----  --- ----  -----";
-	for (i=0; i < MAX_PLANES+2; i++)
-	    *msg++ = (char *) malloc (strlen(score_msg[2])+1);
-    };
-
-    msg = &score_msg[4];
-    FOR_EACH_PLANE (p,pp) {
-	switch (p -> type) {
-	    case C150:
-		plane_name = C150_NAME;
+void mouse_mouve(int x, int y) {
+	
+	
+	switch (lgs->sts) {
+	case PRESENTATION:
 		break;
-	    case B747:
-		plane_name = B747_NAME;
+	case OBJECTVIEWER:
+		if (moveok) {
+			msdx = x - msx;
+			msdy = y - msy;
+			lgs->cyaw += msdx *0.5;
+			lgs->cpitch -= msdy *0.5;
+		}
+		if (zoomok) {
+			msdy = y - msy;
+			lgs->objz -= msdy * 0.5;
+		}
 		break;
-	    case F15:
-		plane_name = F15_NAME;
-		break;
-	    case F16:
-	    case F16W:
-		plane_name = F16_NAME;
-		break;
-	    case F18:
-		plane_name = F18_NAME;
-		break;
-	    case P38:
-	    case P38W:
-		plane_name = P38_NAME;
+	case SIMULATION:
 		break;
 	}
-	sprintf (*msg++,"%16s %5s  %3d %4d  %5d",
-		p -> myname, plane_name,
-		p -> won, p -> lost, p -> won - p -> lost);
-    }
-    sprintf (*msg++," ");
-    sprintf (*msg++,"Press any character to continue.");
-    **msg = '\0';
-    display_message (score_msg);
+	msx = x;
+	msy = y;
 }
-#define DY 14
-
-make_crash (msg)
-    char *msg;
-{
-    register int y;
-    register Plane p;
-
-    p = planes[0];		/* a bold assumption		*/
-    if (p -> status <= MEXPLODE) then return;
-    p -> lost++;		/* increment my lost count	*/
-    p -> status = MEXPLODE;
-
-    y = METER_LLY-40-DY;
-    if (hud) {
-	makeobj (CLEAR_TEXT_DISPLAY);
-	    color (white);
-	    cmov2s (50,y);
-	    charstr (msg);	/* crash message		*/
-	closeobj ();
-    }
-    else {
-	cursoff ();
-	frontbuffer (TRUE);
-	pushmatrix ();
-	pushviewport ();
-	callobj (CLEAR_REPORT_CARD);	/* just in case, also set up	*/
-	color (white);
-	cmov2s (50,y);
-	charstr (msg);
-	popmatrix ();
-	popviewport ();
-	frontbuffer (FALSE);
-	curson ();
-    }
-}
-
-clear_report_card ()
-{
-    if (hud) {
-    	if (isobj(CLEAR_TEXT_DISPLAY))
-	    delobj(CLEAR_TEXT_DISPLAY);		/* delete all text messages */
-    }
-    else {
-	cursoff ();
-	frontbuffer (TRUE);	/* clear report card from both buffers	*/
-	callobj (CLEAR_REPORT_CARD);
-	frontbuffer (FALSE);
-	curson ();
-    }
-}
-
-int report_card (descent, roll, vx, vz, wheels, p)
-    int descent, vx, vz;
-    int roll, wheels;
-    register Plane p;
-{
-    short on_runway;
-    register int azimuth,rating,y;
-    float xdist,zdist;
-    register char charbuf[80];
-
-    azimuth = p -> azimuth;
-    on_runway = IN_BOX (p, -100.0, 100.0, -8500.0, 0.0);
-
-    roll /= 10;
-    if (roll > 180) roll -= 360;
-    rating = 1;
-
-    if (hud) makeobj (CLEAR_TEXT_DISPLAY);	/* put text in object	*/
-    else {
-	cursoff ();
-	frontbuffer (TRUE);
-	callobj (CLEAR_REPORT_CARD);	/* just in case, also set up	*/
-    }
-    color (white);
-    y = METER_LLY-40-DY;
-
-    cmov2s (50,y);
-    charstr ("Landing Report Card:");
-    sprintf (charbuf,"Rate of descent: %d fpm", descent * 60);
-    cmov2s (50,y-DY);
-    charstr (charbuf);
-    sprintf (charbuf,"Roll angle: %d", roll);
-    cmov2s (50,y-2*DY);
-    charstr (charbuf);
-    sprintf (charbuf,"Air speed: %d knots", vz);
-    cmov2s (50,y-3*DY);
-    charstr (charbuf);
-
-    if (!wheels) {
-	cmov2s (500,y);
-	charstr ("*** Landed with the landing gear up!");
-	rating = 0;
-    }
-    if (descent > 10) {
-	cmov2s (350,y-DY);
-	charstr ("*** Descending too fast!");
-	rating = 0;
-    }
-    if (roll < 0) then roll = -roll;
-    if (roll > 10) {
-	cmov2s (350,y-2*DY);
-	charstr ("*** Too much roll!");
-	rating = 0;
-    }
-    if (!on_runway) {
-	sprintf (charbuf,"*** Landed off the runway!");
-	cmov2s (350,y-3*DY);
-	charstr (charbuf);
-	rating = 0;
-    }
-    else if (vx > 10 || vx < -10) {
-	sprintf (charbuf,"*** Too much drifting: %d fps",vx);
-	cmov2s (350,y-3*DY);
-	charstr (charbuf);
-	rating = 0;
-    }
-    if (roll > 20 || descent > 20 || vx > 20 || vx < -20) then rating = -1;
-
-    cmov2s (250,y);
-    if (rating == 1) {		/* good landing => rate it	*/
-	sprintf (charbuf,"Sideways speed: %d fps",vx);
-	cmov2s (650,y);
-	charstr (charbuf);
-
-	if (azimuth < 900 || azimuth > 2700)
-	then zdist = -1075.0 - p -> z;
-	else zdist = -7425.0 - p -> z;
-	xdist = fabs(p -> x);
-
-	sprintf (charbuf,"Distance from centerline: %d",(int)xdist);
-	cmov2s (650,y-DY);
-	charstr (charbuf);
-
-	zdist = fabs(zdist);
-	sprintf (charbuf,"Distance from touchdown: %d",(int)zdist);
-	cmov2s (650,y-2*DY);
-	charstr (charbuf);
-
-	if (azimuth > 2700) then azimuth = 3600-azimuth;
-	else if (azimuth > 900) then azimuth = 1800 - azimuth;
-	if (azimuth < 0) then azimuth = -azimuth;
-	azimuth /=10;
-	sprintf (charbuf,"Heading error: %d degrees",azimuth);
-	cmov2s (650,y-3*DY);
-	charstr (charbuf);
-
-	if (vx < 0) then vx = -vx;
-	rating = 100 - descent - roll - azimuth - (vx>>1)
-		    -(int)(.01 * zdist) - (int)(.1 * xdist);
-	if (rating < 0) then rating = 0;
-	cmov2s (250,y);
-	sprintf (charbuf, "Nice landing! (%d/100)", rating);
-	charstr (charbuf);
-    }
-    else if (rating == 0) then charstr ("CRASH LANDING! (0/100)");
-    else {
-	charstr ("EXPLODED ON IMPACT!");
-	broadcast ("exploded on impact");
-    }
-
-    if (hud) then closeobj();
-    else {
-	frontbuffer (FALSE);
-	curson ();
-    }
-    return (rating);
-}
-
-/* check my missile against other planes	*/
-check_missile (p)
-    register Plane p;
-{
-    char buf[NAME_LENGTH+32];
-    register Plane ptest,*pp;
-    long last_kill;
-
-    last_kill = p -> mkill;
-    FOR_EACH_PLANE (ptest,pp)
-	if (p != ptest && test_blow_up (p,ptest)) {
-	    p -> mkill = PLANE_ID (ptest);
-	    if (last_kill == NULL_PLANE_ID) {
-		p -> mx = .2 * p -> mx + .8 * ptest -> x;
-		p -> my = .2 * p -> my + .8 * ptest -> y;
-		p -> mz = .2 * p -> mz + .8 * ptest -> z;
-	    }
-	    if (p -> mkill != last_kill) {	/* debounce	*/
-		extern char *WEAPON_NAME[];
-
-		p -> won++;
-		sprintf (buf,"destroyed %s with a %s",
-			    ptest -> myname,WEAPON_NAME[p -> mtype]);
-		broadcast (buf);
-	    }
-	    return;
+void mouse_click(int button, int state, int x, int y) {
+	switch(lgs->sts) {
+	case OBJECTVIEWER:
+		switch (button) {
+		case GLUT_RIGHT_BUTTON:
+			zoomok = (state == GLUT_DOWN);
+			break;
+		case GLUT_LEFT_BUTTON:
+			moveok = (state == GLUT_DOWN);
+			break;
+		}
+		break;
+	case SIMULATION:
+		switch (button) {
+		case GLUT_RIGHT_BUTTON:
+			lpp->rudder += .1f;
+			break;
+		case GLUT_MIDDLE_BUTTON:
+			lpp->rudder = 0.0f;
+			break;
+		case GLUT_LEFT_BUTTON:
+			lpp->rudder -= .1f;
+			break;
+		}
+		break;
 	}
 }
 
-int test_blow_up (m,p)
-    register Plane m,p;
-{
-    register int dx,dy,dz;
-    static int MDIST[] = {250,350,150};
+void draw_presentation(void) {
+	float ystart = YMAXSCREEN - 10.0f;
+	unsigned char string[255];
 
-    /* if the plane is not exploding	*/
-    if (p -> status > MEXPLODE) {
-	dx = m -> mx - p -> x;
-	dy = m -> my - p -> y;
-	dz = m -> mz - p -> z;
-	if (dx < 0) then dx = -dx;
-	if (dy < 0) then dy = -dy;
-	if (dz < 0) then dz = -dz;
-	if (dx + dy + dz < MDIST[m -> mtype]) {
-	    if (m -> mstatus > MEXPLODE) then m -> mstatus = MEXPLODE;
-	    return (TRUE);
+	glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	/**/
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glLoadIdentity();
+	glTranslatef(XMAXSCREEN / 2.0f, YMAXSCREEN / 2.0f - 200, 0.0f);
+	glRotatef(90, 1, 1, 1);
+	glEnable(GL_LIGHTING);
+	glRotatef(-30, 0, 0, 1);
+	glRotatef(logorotate += 0.1f, 1, 0, 0);
+	glScalef(10.0f, 10.0f, 10.0f);
+	draw_logo();
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 1.0, 1.0);
+	glLoadIdentity();
+	int w;
+	w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
+	if (message == 1) {
+		for (int u = 0; u < 24; u++) {
+			sprintf(string, "%s", helpmsg[u]);
+			gl_print(string, XMAXSCREEN / 2 - 350, ystart -= 13.0);
+		}
 	}
-    }
-    return (FALSE);
+	else {
+		for (int u = 0; u < 24; u++) {
+			sprintf(string, "%s", plane_menu[u]);
+			gl_print(string, XMAXSCREEN / 2 - 350, ystart -= 13.0);
+		}
+	}
+
+	// glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	// glRasterPos2i(XMAXSCREEN - 400, 64);
+	// glGetFloatv(GL_CURRENT_RASTER_POSITION_VALID, c);
+	// 354x92px
+	// glBitmap(354, 92, 0, 0, 0.0, 0, sgi);
+
+	glFlush();
+
+	glutSwapBuffers();
+}
+void reshape(int width, int height) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity(); // Reset first
+	gluPerspective(lgs->real_fov, (double)width / (double)height, 1.0f, 1.0e9);           // Set perspective
+	glViewport(0, 0, width, height); // Set viewport
+	glMatrixMode(GL_MODELVIEW);
+	XMAXSCREEN = width;
+	YMAXSCREEN = height;
+	XMIDDLE = XMAXSCREEN / 2;
+	YMIDDLE = YMAXSCREEN / 2;
+	X_ADJUST = XMAXSCREEN / 1024.0;
+	Y_ADJUST = YMAXSCREEN / 768.0;
+}
+void reshape_2d(int width, int height) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0, 0, width, height); // Set viewport
+	glOrtho(0, width, 0, height, -1000.0, 1000.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	XMAXSCREEN = width;
+	YMAXSCREEN = height;
+	XMIDDLE = XMAXSCREEN / 2;
+	YMIDDLE = YMAXSCREEN / 2;
+	X_ADJUST = XMAXSCREEN / 1024.0;
+	Y_ADJUST = YMAXSCREEN / 768.0;
+}
+void special_key(int k, int x, int y) {
+	switch (k) {
+	case GLUT_KEY_LEFT:
+		if (lgs->view_switch == PILOTE) {
+			lgs->view_angle = 90.0f;
+		}
+		else {
+			lgs->eyes.x -= 10.0f;
+		}
+		
+		break;
+	case GLUT_KEY_RIGHT:
+		if (lgs->view_switch == PILOTE) {
+			lgs->view_angle = 270.0f;
+		}
+		else {
+			lgs->eyes.x += 10.0f;
+		}
+		break;
+	case GLUT_KEY_UP:
+		if (lgs->view_switch == PILOTE) {
+			lgs->view_angle = 0.0f;
+		}
+		else {
+			lgs->eyes.z -= 10.0f;
+		}
+		break;
+	case GLUT_KEY_DOWN:
+		if (lgs->view_switch == PILOTE) {
+			lgs->view_angle = 180.0f;
+		}
+		else {
+			lgs->eyes.z += 10.0f;
+		}
+		break;
+	case GLUT_KEY_F1:
+		lgs->fog = !lgs->fog;
+		if (lgs->fog) {
+			glEnable(GL_FOG);
+			GLfloat fogcolor[4] = { 0.5, 0.5, 0.5, 1 };
+			GLint fogmode = GL_EXP;
+			glFogi(GL_FOG_MODE, fogmode);
+			glFogfv(GL_FOG_COLOR, fogcolor);
+			glFogf(GL_FOG_DENSITY, 0.000007);
+			glFogf(GL_FOG_START, 10.0);
+			glFogf(GL_FOG_END, 5.0);
+		}
+		else {
+			glDisable(GL_FOG);
+		}
+		break;
+	case GLUT_KEY_F2:
+		lgs->light = !lgs->light;
+		break;
+	case GLUT_KEY_F3:
+		lgs->textures = !lgs->textures;
+		break;
+	case GLUT_KEY_F11:
+		if (!fullscreen) {
+			glutFullScreen();
+		}
+		else {
+			glutPositionWindow(100, 50);
+			glutReshapeWindow(XWIDTH, YHEIGHT);
+		}
+		fullscreen = !fullscreen;
+	}
+}
+void simul_key(unsigned char k, int x, int y) {
+	switch (k) {
+	case 27:
+		init_presentation(1);
+		break;
+	case 'r':
+	case 'R':
+	case 'u':
+	case 'U':
+		init_presentation(0);
+		break;
+	default:
+		handle_key(k, lgs, lpp);
+		break;
+	}
+}
+void object_viewer_key(unsigned char k, int x, int y) {
+	switch (k) {
+	case 27:
+		/* Escape */
+		init_presentation(0);
+		break;
+	case 32:
+
+		break;
+	case '+':
+		cz += 5;
+		break;
+	case '-':
+		cz -= 5;
+		break;
+	case '1':
+		object3Dview = C150;
+		break;
+	case '2':
+		object3Dview = B747;
+		break;
+	case '3':
+		object3Dview = F15;
+		break;
+	case '4':
+		object3Dview = F16;
+		break;
+	case '5':
+		object3Dview = F18;
+		break;
+	case '6':
+		object3Dview = P38;
+		break;
+	case '7':
+		object3Dview = HOUSE;
+		break;
+	case '8':
+		object3Dview = 8000;
+		break;
+	case '9':
+		object3Dview = TREE;
+		break;
+	case 'a':
+		object3Dview = TEXTCUBE;
+		break;
+	case 'z':
+		object3Dview = MYMOUNTAIN;
+		break;
+	case ':':
+		lgs->polymod = GL_FILL;
+
+		break;
+	case '!':
+		lgs->polymod = GL_LINE;
+
+		break;
+	case ';':
+		lgs->polymod = GL_POINT;
+		break;
+	}
+}
+void object_special_viewerKey(int k, int x, int y) {
+	switch (k) {
+	case GLUT_KEY_LEFT:
+		lgs->cyaw += 5;
+		break;
+	case GLUT_KEY_RIGHT:
+		lgs->cyaw -= 5;
+		break;
+	case GLUT_KEY_UP:
+		lgs->cpitch += 5;
+		break;
+	case GLUT_KEY_DOWN:
+		lgs->cpitch -= 5;
+		break;
+	case GLUT_KEY_F11:
+		glutFullScreen();
+		break;
+	}
+}
+void presentation_key(unsigned char k, int x, int y) {
+	switch (k) {
+	case 27:
+		/* Escape */
+		exit(0);
+		break;
+	case 32:
+		message = !message;
+		break;
+	case '0':
+		init_3D_viewer(0);
+		break;
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+		init_game(k);
+		break;
+	}
+}
+void get_time() {
+	
+	int zetimer = glutGet(GLUT_ELAPSED_TIME);
+	int timeelapsed = zetimer - lgs->timer +1;
+	if (lgs->ticks == 20) {
+		float realtps = lgs->ticks / (timeelapsed/1000.0f);
+		frames = realtps / 20;
+		lgs->fps = realtps;
+		lgs->ticks = 0;
+		lgs->timer = zetimer;
+	}
+}
+void idle(void) {
+	glutPostRedisplay();
+}
+void visible(int vis) {
+	if (vis == GLUT_VISIBLE)
+		glutIdleFunc(NULL);
+	else
+		glutIdleFunc(NULL);
 }
 
-/* find and return the closest plane to me	*/
-Plane find_closest_plane (myp)
-    register Plane myp;
-{
-    float myx,myy,myz;
-    float dx,dy,dz, d,dbest;
-    register Plane p,*pp,pbest;
 
-    pbest = NULL;
-    dbest = 1e30;
-    myx = my_ptw[2][0];
-    myy = my_ptw[2][1];
-    myz = my_ptw[2][2];
+void flight_simulation(int va) {
+	int zetimer1, zetimer2;
+	if (lgs->sts == SIMULATION) {
+		lgs->ticks++;
+		zetimer1 = glutGet(GLUT_ELAPSED_TIME);
+		simulation(lgs, lpp, msx, msy, XMIDDLE, YMIDDLE, XMAXSCREEN, YMAXSCREEN);
+		setClearColor(grey12);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    FOR_EACH_PLANE (p,pp)		/* for each plane	*/
-    /* if its not me, not exploding, above 150 feet, not C150	*/
-    if (p != myp && p -> status > MEXPLODE && 
-	p -> y > 150.0 && p -> type != C150)
-    {
-	dx = myp -> x - p -> x;		/* compute distance	*/
-	dy = myp -> y - p -> y;
-	dz = myp -> z - p -> z;
-	d = sqrt(dx*dx + dy*dy + dz*dz);
+		lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+		if (!lgs->hud) {
+			draw_cockpit(lpp, halftone, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
+			glCallList(COCKPIT);
+			
+			int w = XMAXSCREEN - 1;
+			int h = YMAXSCREEN / 2 - 1;
+			set_view_screen(lgs->real_fov, w, h, h);
+			draw_game(lgs,lpp);
+		}
+		else {
 
-	if ((myx*dx + myy*dy + myz*dz)/d > .988) {
-	    if (d < dbest) {		/* and compare with best */
-		dbest = d;
-		pbest = p;
-	    }
+			set_view_screen(lgs->real_fov, XMAXSCREEN, YMAXSCREEN, 0);
+			draw_game(lgs, lpp);
+			
+			if (lgs->debug) {
+				draw_debug_text(lgs,lpp, msx,msy);
+				glCallList(DEBUG_TEXT);
+			}
+			else {
+				draw_hud(lgs,lpp, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
+				glCallList(HUD);
+			}
+			
+			glCallList(REPORT_CARD);
+			
+			
+		}
+		draw_mouse_cursor(XMAXSCREEN, YMAXSCREEN, msx, msy);
+		glFlush();
+		glutSwapBuffers();
+		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
+		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
+		get_time();
+		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
 	}
-    }
-    return (pbest);
+}
+void flight_demo_simulation(int va) {
+	if (lgs->sts == DEMONSTRATION) {
+		lgs->ticks++;
+		lpp->thrust = demo[demoCounter].throttle;
+		msx = demo[demoCounter].msx * ((float)XMAXSCREEN / (XWIDTH * 1.0f));
+		msy = demo[demoCounter].msy * ((float)YMAXSCREEN / (YHEIGHT * 1.0f));
+		/* adjust drag and lift	*/
+		lpp->spoilers = demo[demoCounter].spoilers;
+		lpp->Spdf = .0025 * lpp->spoilers;
+		lpp->Splf = 1.0 - .005 * lpp->spoilers;
+
+		lpp->flaps = demo[demoCounter].flaps;
+		lpp->max_cl = 1.5 + lpp->flaps / 62.5;
+		lpp->min_cl = lpp->flaps / 62.5 - 1.5;
+		lpp->tilt_factor = .005 * lpp->flaps + .017;
+
+		if ((lgs->tick_counter/ 30)* lgs->tps > demo[demoCounter].framecounter) {
+			if (demoCounter < maxdemo - 1) {
+				demoCounter++;
+			}
+			else {
+				if (demo[demoCounter].gotoNext != 0) {
+					demoCounter = demo[demoCounter].gotoNext;
+					lgs->tick_counter = 0;
+				}
+			}
+			lgs->tower_fov = demo[demoCounter].cameraZoom;
+			lgs->view_switch = demo[demoCounter].cameraview;
+			lgs->real_fov = 45.0f;
+			if (lgs->view_switch == TOWER) {
+				lgs->real_fov = lgs->tower_fov;
+			}
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity(); // Reset first
+			gluPerspective(lgs->real_fov, (double)XMAXSCREEN / (double)YMAXSCREEN, 1.0, 1.0e9);                    // Set perspective
+			glViewport(0, 0, XMAXSCREEN, YMAXSCREEN); // Set viewport
+			glMatrixMode(GL_MODELVIEW);
+		}
+
+
+		simulation(lgs, lpp, msx, msy, XMIDDLE, YMIDDLE, XMAXSCREEN, YMAXSCREEN);
+		lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity(); // Reset first
+		gluPerspective(lgs->real_fov, (double)XMAXSCREEN / (double)YMAXSCREEN, 1.0, 1.0e9);           // Set perspective
+		glViewport(0, 0, XMAXSCREEN, YMAXSCREEN); // Set viewport
+		glMatrixMode(GL_MODELVIEW);
+		setClearColor(grey12);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		draw_game(lgs,lpp);
+		glFlush();
+		glutSwapBuffers();
+		glutTimerFunc(1000 / lgs->tps, flight_demo_simulation, va);
+	}
+}
+void init_game(unsigned char k) {	
+	free_memory();
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
+	glDisable(GL_LIGHT3);
+
+	glEnable(GL_LIGHT0);
+	float lmodel_LVW[] = { 0.5 };
+	float lmodel_ambient[] = { 0.02, 0.02, 0.02, 1.0 };
+	float lmodel_TWO[] = { GL_TRUE };
+
+	glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, lmodel_LVW);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
+	reset_gs(lgs);
+	lpp = init_plane();
+	lgs->sts = SIMULATION;
+	lgs->hud = 0;
+	if (k == '2') {
+		set_b747(lgs, lpp);
+	}
+	else if (k == '5') {
+		set_f18(lgs, lpp);
+	}
+	else if (k == '3') {
+		set_f15(lgs, lpp);
+	}
+	else if (k == '4') {
+		set_f16(lgs, lpp);
+	}
+	else if (k == '1') {
+		set_c150(lgs, lpp);
+	}
+	else if (k == '6') {
+		set_p38(lgs, lpp);
+	}
+	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+	glutReshapeFunc(reshape);
+	glutDisplayFunc(idle);
+	glutIdleFunc(NULL);
+
+	glutMotionFunc(mouse_mouve);
+	glutMouseFunc(mouse_click);
+	glutPassiveMotionFunc(mouse_mouve);
+	glutKeyboardFunc(simul_key);
+	glutSpecialFunc(special_key);
+	reshape(XMAXSCREEN, YMAXSCREEN);
+	glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
+}
+void init_demo(int va) {
+    if (lgs->sts == PRESENTATION) {
+		free_memory();
+		reset_gs(lgs);
+		lpp = init_plane();
+		set_f18(lgs, lpp);
+		lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+		lgs->sts = DEMONSTRATION;
+		reshape(XMAXSCREEN, YMAXSCREEN);
+		glutReshapeFunc(reshape);
+		glutDialsFunc(NULL);
+		glutDisplayFunc(idle);
+		glutIdleFunc(idle);
+		glutTimerFunc(1000 / lgs->tps, flight_demo_simulation, 0);
+		glutTimerFunc(200 * 1000, init_presentation, 0);
+	}
+}
+void init_presentation(int va) {
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
+	glEnable(GL_LIGHT3);
+
+	glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+	reset_gs(lgs);
+	lgs->sts = PRESENTATION;
+	reshape_2d(XMAXSCREEN, YMAXSCREEN);
+	glutDisplayFunc(draw_presentation);
+	glutIdleFunc(draw_presentation);
+	glutReshapeFunc(reshape_2d);
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
+	glutKeyboardFunc(presentation_key);
+	glutTimerFunc(50 * 1000, init_demo, 0);
+}
+void draw_3D_viewer(void) {
+	glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, lgs->polymod);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(0, 0, lgs->objz);
+	glRotatef(lgs->cyaw, 0, 1, 0);
+	glRotatef(lgs->cpitch, 1, 0, 0);
+	glRotatef(lgs->croll, 0, 0, 1);
+	glCallList(object3Dview);
+	gluLookAt(0, 0, cz, 0, 0, 100, 0, 1, 0);
+	glPopMatrix();
+	glFlush();
+	glutSwapBuffers();
+	if (!moveok && !zoomok) {
+		lgs->cyaw += msdx * 0.5 *0.1;
+		lgs->cpitch -= msdy * 0.5*0.1;
+	}
+}
+void init_3D_viewer(int va) {
+	free_memory();
+	reset_gs(lgs);
+	lgs->sts = OBJECTVIEWER;
+	reshape(XMAXSCREEN, YMAXSCREEN);
+	glutMotionFunc(mouse_mouve);
+	glutMouseFunc(mouse_click);
+	glutPassiveMotionFunc(mouse_mouve);
+	glutDisplayFunc(draw_3D_viewer);
+	glutIdleFunc(idle);
+	glutReshapeFunc(reshape);
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
+	glutKeyboardFunc(object_viewer_key);
+	glutSpecialFunc(object_special_viewerKey);
+}
+#ifdef W32
+#ifdef DEBUG
+int main() {
+	return WinMain(GetModuleHandle(NULL), NULL, GetCommandLineA(), SW_SHOWNORMAL);
+}
+#endif
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+	return main_start(__argc, __argv);
+}
+#else
+int main(int argc, char *argv[]) {
+	main_start(argc, argv);
+}
+#endif
+
+int main_start(int argc, char *argv[]) {
+	glutInit(&argc, argv);
+	windows = glutCreateWindow("Flight");
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
+
+	init_palette();
+	
+	frames = 0;
+	
+	
+	lgs = init_game_state();
+	init_lights();
+	set_sun(-1.0, 1.0, 2.0);
+	init_logo();
+	create_pattern();
+	init_textures();
+	make_meters();
+	make_c150(C150);
+	make_b747(B747);
+	make_f18(F18);
+	make_f15(F15);
+	make_f16(F16);
+	make_f16w(F16W);
+	make_p38w(P38W);
+	make_p38(P38);
+	make_world(lgs);
+	make_house();
+	make_tree();
+	make_my_building(8000, orange0, -50,-75,-50, 100, 150, 100,5);
+	make_mountain_zone(0, 0, 100, lgs);
+	
+	make_buildings(TOWER_EX, TOWER_EY, TOWER_EZ, lgs);
+	make_lights();
+	
+	make_textures_cube();
+	
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_LINEAR);
+
+	glEnable(GL_LINE_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_LINEAR);
+	
+	init_presentation(0);
+	
+	
+	glutReshapeWindow(XMAXSCREEN, YMAXSCREEN);
+
+	glutMainLoop();
+	return 0;
 }
