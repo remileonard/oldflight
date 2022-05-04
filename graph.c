@@ -2,6 +2,27 @@
 #include "bitmap.h"
 
 #pragma warning(disable : 4996)
+void display_error() {
+	int error = glGetError();
+	switch (error)
+	{
+	case GL_INVALID_ENUM:
+		printf("invalid enum\n");
+		break;
+	case GL_INVALID_VALUE:
+		printf("invalid value\n");
+		break;
+	case GL_INVALID_OPERATION:
+		printf("invalid operation\n");
+		break;
+	case GL_NO_ERROR:
+		printf("no error\n");
+		break;
+	default:
+		printf("euuuhh\n");
+		break;
+	}
+}
 void draw_mouse_cursor(int w, int h, int x, int y) {
 	
 	glMatrixMode(GL_PROJECTION);
@@ -114,7 +135,7 @@ void draw_poly(GLfloat poly[][3], int nbvert, int drawNormal) {
 	center[0] /= nbvert;
 	center[1] /= nbvert;
 	center[2] /= nbvert;
-
+	
 	/*
 	float length = sqrt((normal[0] * normal[0]) + (normal[1] * normal[1]) + (normal[2] * normal[2]));
 	normal[0] /= length;

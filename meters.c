@@ -999,7 +999,6 @@ void draw_hud(gameState *gs, plane *pp, int sc_width, int sc_height, float X_ADJ
 	}
 	glBegin(GL_LINE_STRIP);
 	glVertex2s(20, 0);
-	// @TODO not supported maketag(RHAWS_EDIT);
 	glVertex2s(20, 0);
 	glEnd();
 	glPushMatrix();
@@ -1033,9 +1032,5 @@ void draw_hud(gameState *gs, plane *pp, int sc_width, int sc_height, float X_ADJ
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopAttrib();
 	glEndList();
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "flight_remake.h"
+#include "flight.h"
 typedef struct demoinput {
 	int msx;
 	int msy;

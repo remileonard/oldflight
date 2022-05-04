@@ -165,7 +165,10 @@ void make_my_building(int obj, int col, int llx, int lly, int llz, int dx, int d
 		draw_poly(south, 4, 0);
 		setColor(col + 4);
 		draw_poly(west, 4, 0);
-
+		if (segments != 1) {
+			by = wy;
+		}
+		
 		if (segments > 1 && j< segments-1) {
 			dimColor(col + 1);
 			draw_poly(bnorth, 4, 0);
@@ -176,8 +179,8 @@ void make_my_building(int obj, int col, int llx, int lly, int llz, int dx, int d
 			dimColor(col + 4);
 			draw_poly(bwest, 4, 0);
 			by = wy + windowsHigh;
-			wy = by + segh;
 		}
+		wy = by + segh;
 	}
 	if (segments == 1) {
 		by += wy;
@@ -278,37 +281,34 @@ void make_tree() {
 	glEndList();
 }
 void init_textures() {
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
-	for (int pos = 0; pos < 4096; pos += 4) {
-		unsigned char r = terain[pos + 2];
-		unsigned char g = terain[pos + 1];
-		unsigned char b = terain[pos + 0];
-		unsigned char a = terain[pos + 3];
-		terain[pos + 3] = a;
-		terain[pos + 0] = r;
-		terain[pos + 1] = g;
-		terain[pos + 2] = b;
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &terain);
-	int error = glGetError();
-	
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	GLuint boundTexture = 0;
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(2, texID);
 
+	glBindTexture(GL_TEXTURE_2D, texID[0]);
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&boundTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &terain);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	glBindTexture(GL_TEXTURE_2D, texID[1]);
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&boundTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &herbes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void make_textures_cube() {
 	glNewList(TEXTCUBE, GL_COMPILE);
 	glColor4f(1.0f,1.0f, 1.0f,1.0f);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texID);
+	glBindTexture(GL_TEXTURE_2D, texID[0]);
 	glBegin(GL_QUADS);
 	// Front Face
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-10.0f, -10.0f, 10.0f);  // Bottom Left Of The Texture and Quad
@@ -326,6 +326,9 @@ void make_textures_cube() {
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(10.0f, 10.0f, 10.0f);  // Bottom Right Of The Texture and Quad
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(10.0f, 10.0f, -10.0f);  // Top Right Of The Texture and Quad
 		// Bottom Face
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, texID[1]);
+	glBegin(GL_QUADS);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-10.0f, -10.0f, -10.0f);  // Top Right Of The Texture and Quad
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(10.0f, -10.0f, -10.0f);  // Top Left Of The Texture and Quad
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(10.0f, -10.0f, 10.0f);  // Bottom Left Of The Texture and Quad
@@ -350,18 +353,18 @@ void init_light(float sunpos) {
 	// i would like the light to originate from an upper corner
 	// directed to the opposing lower corner (across the room basically)
 
-	GLfloat lightPosition[] = { 0, 100000, sunpos, 1 };
-	GLfloat lightDirection[] = { 0, 10, 0, 1 };
-	GLfloat ambientLight[] = { 1, 1, 1, 1 };
-	GLfloat diffuseLight[] = { 1, 1, 1, 1 };
-	glPushMatrix();
-	glLoadIdentity();
+	//GLfloat lightPosition[] = { 0, 100000, sunpos, 1 };
+	GLfloat lightPosition[] = { -1.0f, -5.0f, 10.0f, 0.0f };
+	GLfloat lightDirection[] = { 0, -1, -1, 1 };
+	GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 0.5f };
+	GLfloat diffuseLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.8f);
-	glPopMatrix();
-	//sunpos += 1000*cos(((int)sunpos%1000)/1000.0);
+	//glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.8f);
+	//sunpos += 1000;
 }
 void free_camera(gameState *gs) {
 	rotateVector(&gs->camera, gs->cyaw, gs->cpitch);
@@ -415,10 +418,7 @@ void make_mountain_zone(int x, int y, int size, struct gameState *gs) {
 			if (dy > 0) {
 				height += increment;
 			}
-			else if ((dy > -2) && (dy < 2 )){
-				//rien
-			}
-			else {
+			else if (!((dy > -2) && (dy < 2))) {
 				height -= increment;
 			}
 			if (height < 0) {
@@ -438,32 +438,39 @@ void make_mountain_zone(int x, int y, int size, struct gameState *gs) {
 		squares++;
 		height = 0;
 	}
-
+	for (int i = 1; i < squares - 2; i++) {
+		for (int j = 1; j < squares - 2; j++) {
+			if ((mountain[(i*squares + j)][1] == 0) && ((mountain[(i - 1) * squares + j][1] > 0) || (mountain[(i + 1) * squares + j][1] > 0))) {
+				mountain[(i*squares + j)][1] = (mountain[(i - 1) * squares + j][1] + mountain[(i + 1) * squares + j][1]) / 2.0f;
+			}
+			
+		}
+	}
 	glNewList(MYMOUNTAIN, GL_COMPILE);
 	glScalef(1.5, 1.0, 1.0);
 	int c = 0;
-	glBindTexture(GL_TEXTURE_2D, texID);
+	glBindTexture(GL_TEXTURE_2D, texID[1]);
 	glEnable(GL_NORMALIZE);
 	for (int i =0; i< squares-1; i++) {
 		for (int j = 0; j < squares-1; j++) {
 			glBegin(GL_POLYGON);
 			c = mountain[(i*squares + j + 1)][1]/3.0;
-			setColor(lime0 + (c % 4));
+			setColor(grey1 + (c % 4));
 				glTexCoord2f(0.0f, 0.0f);
 				glVertex3fv(mountain[(i*squares+j)]);
 				glTexCoord2f(0.0f, 1.0f);
 				glVertex3fv(mountain[(i*squares + j+1)]);
-				glTexCoord2f(1.0f, 1.0f);
+				glTexCoord2f(1.0f, 0.0f);
 				glVertex3fv(mountain[(i+1)*squares + j]);
 			glEnd();
 			c = mountain[(i + 1)*squares + j + 1][1]/3.0;
 			glBegin(GL_POLYGON);
-			setColor(lime0 + (c % 4));
-				glTexCoord2f(0.0f, 0.0f);
+			setColor(grey1 + (c % 4));
+				glTexCoord2f(1.0f, 0.0f);
 				glVertex3fv(mountain[(i*squares + j + 1)]);
 				glTexCoord2f(0.0f, 1.0f);
 				glVertex3fv(mountain[(i + 1)*squares + j+1]);
-				glTexCoord2f(1.0f, 0.0f);
+				glTexCoord2f(1.0f, 1.0f);
 				glVertex3fv(mountain[(i + 1)*squares + j]);
 			glEnd();
 			c++;

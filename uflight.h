@@ -3,7 +3,7 @@
 #include "colors.h"
 #include "maths.h"
 #include "objects.h"
-#include "flight_remake.h"
+#include "flight.h"
 
 
 #pragma warning(disable : 4244)

@@ -283,8 +283,8 @@ void init_lights(void) {
   glLightfv(GL_LIGHT3, GL_DIFFUSE, light3_lcolor);
   glLightfv(GL_LIGHT3, GL_POSITION, light3_position);
 
-  glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, lmodel_LVW);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+  //glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, lmodel_LVW);
+  //glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 }
 
 void init_logo(void) {

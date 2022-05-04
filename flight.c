@@ -1233,13 +1233,25 @@ void draw_game(gameState * gs, plane *pp) {
 	glPushMatrix();
 	glTranslatef(120000, 0, 100000);
 	glScalef(300, 100, 220);
+	if (gs->textures) {
+		glEnable(GL_TEXTURE_2D);
+	}
 	glCallList(MYMOUNTAIN);
+	if (gs->textures) {
+		glDisable(GL_TEXTURE_2D);
+	}
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(120000, 0, 130000);
+	glTranslatef(120000, 0, 140000);
 	glRotatef(180, 0, 1, 0);
 	glScalef(300, 100, 220);
+	if (gs->textures) {
+		glEnable(GL_TEXTURE_2D);
+	}
 	glCallList(MYMOUNTAIN);
+	if (gs->textures) {
+		glDisable(GL_TEXTURE_2D);
+	}
 	glPopMatrix();
 	if (gs->light) {
 		glDisable(GL_LIGHTING);

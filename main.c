@@ -360,10 +360,10 @@ void flight_simulation(int va) {
 			draw_game(lgs,lpp);
 		}
 		else {
-
 			set_view_screen(lgs->real_fov, XMAXSCREEN, YMAXSCREEN, 0);
-			draw_game(lgs, lpp);
 			
+			draw_game(lgs, lpp);
+
 			if (lgs->debug) {
 				draw_debug_text(lgs,lpp, msx,msy);
 				glCallList(DEBUG_TEXT);
@@ -373,6 +373,8 @@ void flight_simulation(int va) {
 				glCallList(HUD);
 			}
 			
+			
+
 			glCallList(REPORT_CARD);
 			
 			
@@ -606,24 +608,19 @@ int main_start(int argc, char *argv[]) {
 	make_world(lgs);
 	make_house();
 	make_tree();
-	make_my_building(8000, orange0, -50,-75,-50, 100, 150, 100,5);
-	make_mountain_zone(0, 0, 100, lgs);
-	
+	make_my_building(8000, orange0, -50,-75,-50, 100, 150, 100,1);
 	make_buildings(TOWER_EX, TOWER_EY, TOWER_EZ, lgs);
 	make_lights();
-	
+	make_mountain_zone(0, 0, 100, lgs);
 	make_textures_cube();
 	
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_POINT_SMOOTH);
-	glHint(GL_POINT_SMOOTH_HINT, GL_LINEAR);
-
 	glEnable(GL_LINE_SMOOTH);
-	glHint(GL_LINE_SMOOTH_HINT, GL_LINEAR);
-	
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
 	init_presentation(0);
 	
 	

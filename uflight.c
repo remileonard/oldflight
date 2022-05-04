@@ -68,19 +68,28 @@ void make_explosion()
 }
 
 void make_city_buildings(int x, int y, int size, gameState *gs) {
+	int bheight;
+	int segments;
 	for (int t = 0; t < 100; t++) {
 		int lx = mrandom(size / 2)+(x + size / 2);
 		int ly = 0;
 		int lz = mrandom(size/2) - (y+size/2);
+		
 		switch (t % 5) {
 		case 0:
-			makebox(orange0, lx, ly, lz, fabs(mrandom(200)) + 100, fabs(mrandom(200)) + 300, fabs(mrandom(200)) + 350, 1, gs);
+			bheight = fabs(mrandom(200)) + 350;
+			segments = bheight / 100;
+			makebox(orange0, lx, ly, lz, fabs(mrandom(200)) + 100, bheight, fabs(mrandom(200)) + 300, segments, gs);
 			break;
 		case 1:
-			makebox(tan0, lx, ly, lz, fabs(mrandom(200)) + 250, fabs(mrandom(200)) + 400, fabs(mrandom(200)) + 250, 1, gs);
+			bheight = fabs(mrandom(200)) + 250;
+			segments = bheight / 100;
+			makebox(tan0, lx, ly, lz, fabs(mrandom(200)) + 250, bheight, fabs(mrandom(200)) + 400, segments, gs);
 			break;
 		case 2:
-			makebox(bgrey, lx, ly, lz, fabs(mrandom(200)) + 350, fabs(mrandom(200)) + 250, fabs(mrandom(200)) + 350,  1, gs);
+			bheight = fabs(mrandom(200)) + 150;
+			segments = bheight / 100;
+			makebox(bgrey+5, lx, ly, lz, fabs(mrandom(200)) + 350, bheight, fabs(mrandom(400)) + 250, segments, gs);
 			break;
 		case 3:
 			set_tree(lx, ly, lz, gs);
@@ -665,7 +674,7 @@ void makemtn(int cx, int cy, int cz, int n, int savearray[], gameState *gs)
 		glDeleteLists(b->ury_obj, 1);
 	}
 	glNewList(b->ury_obj, GL_COMPILE);
-	
+	glBindTexture(GL_TEXTURE_2D, texID[0]);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_NORMALIZE);
