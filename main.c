@@ -1,6 +1,5 @@
 ﻿#include "main.h"
 
-
 void free_memory() {
 	if (lpp != NULL) {
 		free(lpp);
@@ -9,24 +8,26 @@ void free_memory() {
 }
 void mouse_mouve(int x, int y) {
 	
-	
-	switch (lgs->sts) {
-	case PRESENTATION:
-		break;
-	case OBJECTVIEWER:
-		if (moveok) {
-			msdx = x - msx;
-			msdy = y - msy;
-			lgs->cyaw += msdx *0.5;
-			lgs->cpitch -= msdy *0.5;
+	if (lgs != NULL) {
+		switch (lgs->sts) {
+		case PRESENTATION:
+			break;
+		case OBJECTVIEWER:
+			if (moveok) {
+				msdx = x - msx;
+				msdy = y - msy;
+				lgs->cyaw += msdx * 0.5;
+				lgs->cpitch -= msdy * 0.5;
+			}
+			if (zoomok) {
+				msdy = y - msy;
+				lgs->objz -= msdy * 0.5;
+			}
+			glutPostRedisplay();
+			break;
+		case SIMULATION:
+			break;
 		}
-		if (zoomok) {
-			msdy = y - msy;
-			lgs->objz -= msdy * 0.5;
-		}
-		break;
-	case SIMULATION:
-		break;
 	}
 	msx = x;
 	msy = y;
@@ -94,17 +95,17 @@ void draw_presentation(void) {
 		}
 	}
 
-	// glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	// glRasterPos2i(XMAXSCREEN - 400, 64);
-	// glGetFloatv(GL_CURRENT_RASTER_POSITION_VALID, c);
+	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 glRasterPos2i(XMAXSCREEN - 400, 64);
+	 //glGetFloatv(GL_CURRENT_RASTER_POSITION_VALID, c);
 	// 354x92px
-	// glBitmap(354, 92, 0, 0, 0.0, 0, sgi);
+	 glBitmap(354, 92, 0, 0, 0.0, 0, sgi);
 
 	glFlush();
 
 	glutSwapBuffers();
 }
-void reshape(int width, int height) {
+void reshape_3d(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity(); // Reset first
 	gluPerspective(lgs->real_fov, (double)width / (double)height, 1.0f, 1.0e9);           // Set perspective
@@ -275,6 +276,7 @@ void object_viewer_key(unsigned char k, int x, int y) {
 		lgs->polymod = GL_POINT;
 		break;
 	}
+	glutPostRedisplay();
 }
 void object_special_viewerKey(int k, int x, int y) {
 	switch (k) {
@@ -330,7 +332,7 @@ void get_time() {
 	}
 }
 void idle(void) {
-	glutPostRedisplay();
+	
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -482,7 +484,7 @@ void init_game(unsigned char k) {
 		set_p38(lgs, lpp);
 	}
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
-	glutReshapeFunc(reshape);
+	glutReshapeFunc(reshape_3d);
 	glutDisplayFunc(idle);
 	glutIdleFunc(NULL);
 
@@ -491,7 +493,7 @@ void init_game(unsigned char k) {
 	glutPassiveMotionFunc(mouse_mouve);
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
-	reshape(XMAXSCREEN, YMAXSCREEN);
+	reshape_3d(XMAXSCREEN, YMAXSCREEN);
 	glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
 }
 void init_demo(int va) {
@@ -502,9 +504,8 @@ void init_demo(int va) {
 		set_f18(lgs, lpp);
 		lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 		lgs->sts = DEMONSTRATION;
-		reshape(XMAXSCREEN, YMAXSCREEN);
-		glutReshapeFunc(reshape);
-		glutDialsFunc(NULL);
+		reshape_3d(XMAXSCREEN, YMAXSCREEN);
+		glutReshapeFunc(reshape_3d);
 		glutDisplayFunc(idle);
 		glutIdleFunc(idle);
 		glutTimerFunc(1000 / lgs->tps, flight_demo_simulation, 0);
@@ -528,6 +529,8 @@ void init_presentation(int va) {
 	glutKeyboardFunc(presentation_key);
 	glutTimerFunc(50 * 1000, init_demo, 0);
 }
+
+
 void draw_3D_viewer(void) {
 	glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -544,6 +547,7 @@ void draw_3D_viewer(void) {
 	gluLookAt(0, 0, cz, 0, 0, 100, 0, 1, 0);
 	glPopMatrix();
 	glFlush();
+	
 	glutSwapBuffers();
 	if (!moveok && !zoomok) {
 		lgs->cyaw += msdx * 0.5 *0.1;
@@ -554,13 +558,14 @@ void init_3D_viewer(int va) {
 	free_memory();
 	reset_gs(lgs);
 	lgs->sts = OBJECTVIEWER;
-	reshape(XMAXSCREEN, YMAXSCREEN);
+	reshape_3d(XMAXSCREEN, YMAXSCREEN);
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
-	glutPassiveMotionFunc(mouse_mouve);
+	//glutIdleFunc(NULL);
+	//glutPassiveMotionFunc(mouse_mouve);
 	glutDisplayFunc(draw_3D_viewer);
 	glutIdleFunc(idle);
-	glutReshapeFunc(reshape);
+	glutReshapeFunc(reshape_3d);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(object_viewer_key);
 	glutSpecialFunc(object_special_viewerKey);

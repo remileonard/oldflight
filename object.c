@@ -404,7 +404,7 @@ void create_pattern() {
 void make_mountain_zone(int x, int y, int size, struct gameState *gs) {
 
 
-	int increment = size / 10;
+	int increment = size / 4;
 	float mountain[10000][3];
 	
 	int cpt = 0;

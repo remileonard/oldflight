@@ -53,3 +53,4 @@ dkms.conf
 *.vs*
 */packages/*
 /oldflight/x64/Debug
+/oldflight/Debug
