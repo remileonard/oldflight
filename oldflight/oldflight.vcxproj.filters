@@ -125,6 +125,9 @@
     <ClCompile Include="..\uflight.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\strike_cmdr.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

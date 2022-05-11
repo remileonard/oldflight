@@ -1,0 +1,3 @@
+[submodule "libRealSpace"]
+	path = libRealSpace
+	url = git@github.com:remileonard/libRealSpace.git
