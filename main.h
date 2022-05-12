@@ -16,6 +16,8 @@
 #include "uflight.h"
 #include "meters.h"
 
+#include "strike_cmdr.h"
+
 #pragma warning(disable : 4996)
 #pragma warning(disable : 4244)
 void free_memory();

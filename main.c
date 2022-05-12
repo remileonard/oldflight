@@ -618,7 +618,7 @@ int main_start(int argc, char *argv[]) {
 	make_lights();
 	make_mountain_zone(0, 0, 100, lgs);
 	make_textures_cube();
-	
+	init_SC();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_LINE_SMOOTH);

@@ -283,7 +283,7 @@ void make_tree() {
 void init_textures() {
 	GLuint boundTexture = 0;
 	glEnable(GL_TEXTURE_2D);
-	glGenTextures(2, texID);
+	glGenTextures(64, texID);
 
 	glBindTexture(GL_TEXTURE_2D, texID[0]);
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&boundTexture);
