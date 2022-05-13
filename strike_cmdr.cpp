@@ -1,6 +1,7 @@
 #include "libRealSpace/src/TreArchive.h"
 #include "libRealSpace/src/SCRenderer.h"
 #include "libRealSpace/src/RSArea.h"
+#include "libRealSpace/src/RSPalette.h"
 #include "libRealSpace/src/Base.h"
 #include <cctype>
   
@@ -8,6 +9,7 @@
 #define F15  1020
 #define F16  1030
 #define F18  1040
+#define SC_WORLD 1100
 
 enum TreID { TRE_GAMEFLOW, TRE_OBJECTS, TRE_MISC, TRE_SOUND, TRE_MISSIONS, TRE_TEXTURES };
 
@@ -35,6 +37,12 @@ std::vector<TreArchive*> tres;
 
 extern "C" void init_SC();
 SCRenderer Renderer;
+RSArea area1;
+RSArea area2;
+RSArea area3;
+RSArea area4;
+RSArea area5;
+RSArea area6;
 void ConvertToUpperCase(char *sPtr)
 {
 	while (*sPtr != '\0')
@@ -109,9 +117,10 @@ void ParseObjList(IffLexer* lexer) {
 	}
 }
 
+#define max_int 500000
 
 void init_SC() {
-	Renderer.Init(1);
+	
     SetBase("G:/DOS/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
@@ -134,7 +143,6 @@ void init_SC() {
 
 
 	PakArchive assets;
-
 	
 	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
 
@@ -142,18 +150,15 @@ void init_SC() {
 	objToDisplay.InitFromRAM(objViewIFF->data, objViewIFF->size);
 
 	ParseObjList(&objToDisplay);
+	Renderer.Init(1);
+
+	Point3D light;
+	light.x = 1;
+	light.y = -5;
+	light.z = 4;
+	Renderer.SetLight(&light);
+	area1.InitFromPAKFileName("ARENA.PAK");
 	//
-	if (glIsList(F15)) {
-		glDeleteLists(F15, 1);
-		glNewList(F15, GL_COMPILE);
-		glScalef(1.5, 1.5, 1.5);
-		glRotatef(90, 0, 1, 0);
-		glEnable(GL_TEXTURE_2D);
-		Renderer.DrawModel(showCases[2].entity, LOD_LEVEL_MAX);
-		glDisable(GL_TEXTURE_2D);
-		glLineWidth(1);
-		glEndList();
-	}
 	if (glIsList(F16)) {
 		glDeleteLists(F16, 1);
 		glNewList(F16, GL_COMPILE);
@@ -163,8 +168,27 @@ void init_SC() {
 		Renderer.DrawModel(showCases[0].entity, LOD_LEVEL_MAX);
 		glDisable(GL_TEXTURE_2D);
 		glLineWidth(1);
+		glPointSize(1);
+		glEnable(GL_BLEND);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEndList();
 	}
+	if (glIsList(F15)) {
+		glDeleteLists(F15, 1);
+		glNewList(F15, GL_COMPILE);
+		glScalef(1.5, 1.5, 1.5);
+		glRotatef(90, 0, 1, 0);
+		glEnable(GL_TEXTURE_2D);
+		Renderer.DrawModel(showCases[2].entity, LOD_LEVEL_MAX);
+		glDisable(GL_TEXTURE_2D);
+		glLineWidth(1);
+		glPointSize(1);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEndList();
+	}
+	
 	if (glIsList(F18)) {
 		glDeleteLists(F18, 1);
 		glNewList(F18, GL_COMPILE);
@@ -174,6 +198,14 @@ void init_SC() {
 		Renderer.DrawModel(showCases[3].entity, LOD_LEVEL_MAX);
 		glDisable(GL_TEXTURE_2D);
 		glLineWidth(1);
+		glPointSize(1);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEndList();
 	}
+	glNewList(SC_WORLD, GL_COMPILE);
+	Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
+	glPointSize(1);
+	glLineWidth(1);
+	glEndList();
 }

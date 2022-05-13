@@ -72,7 +72,7 @@
 #define P38  1050
 #define F16W 1060
 #define P38W 1070
-
+#define SC_WORLD 1100
 #define HOUSE		4000
 #define HOUSES		4001
 #define TREE		4002

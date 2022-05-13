@@ -1204,8 +1204,99 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		}
 	}
 }
-
 void draw_game(gameState * gs, plane *pp) {
+
+
+	glPolygonMode(GL_FRONT_AND_BACK, gs->polymod);
+
+	if (gs->light) {
+		glEnable(GL_LIGHTING);
+	}
+	glCallList(WORLD_OBJECT);
+	glCallList(RUNWAY_STRIPES);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glCallList(SC_WORLD);
+	glDisable(GL_DEPTH_TEST);
+	switch (gs->view_switch) {
+	case PILOTE:
+		glLoadIdentity();
+		glCallList(CROSS_HAIRS);
+		glPopMatrix();
+		glRotatef(-gs->view_angle, 0, 1, 0);
+		glTranslatef(0, -pp->pilot_y, pp->pilot_z);
+		glRotatef(-(pp->twist / 10.0), 0.0, 0.0, 1.0);
+		glRotatef(-(pp->elevationf / 10.0), 1.0, 0.0, 0.0);
+		glRotatef(-(pp->azimuthf / 10.0), 0.0, 1.0, 0.0);
+		glTranslatef(-pp->x, -pp->y, -pp->z);
+
+		break;
+	case WINGMAN:
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glTranslatef(pp->x, pp->y, pp->z);
+		glRotatef(pp->azimuthf / 10.0, 0, 1, 0);
+		glRotatef(pp->elevationf / 10.0, 1, 0, 0);
+		glRotatef(pp->twist / 10.0, 0, 0, 1);
+		glCallList(pp->obj);
+		glDisable(GL_DEPTH_TEST);
+		glLoadIdentity();
+
+
+		glTranslatef(0, -20.0f, -100.0f);
+		glRotatef(-(pp->twist / 10.0), 0.0, 0.0, 1.0);
+		glRotatef(-(pp->elevationf / 10.0), 1.0, 0.0, 0.0);
+		glRotatef(-(pp->azimuthf / 10.0), 0.0, 1.0, 0.0);
+		glTranslatef(-pp->x, -pp->y, -pp->z);
+
+		glPopMatrix();
+		break;
+	case TOWER:
+
+
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glTranslatef(pp->x, pp->y, pp->z);
+		glRotatef((pp->azimuthf / 10.0), 0.0, 1.0, 0.0);
+		glRotatef((pp->elevationf / 10.0), 1.0, 0.0, 0.0);
+		glRotatef((pp->twist / 10.0), 0.0, 0.0, 1.0);
+		glCallList(pp->obj);
+		glDisable(GL_DEPTH_TEST);
+
+		glLoadIdentity();
+
+		gluLookAt(gs->tx, gs->ty, gs->tz, pp->x, pp->y, pp->z, 0, 1, 0);
+		glPopMatrix();
+		break;
+	case FREE:
+		free_camera(gs);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glTranslatef(pp->x, pp->y, pp->z);
+		glRotatef((pp->azimuthf / 10.0), 0.0, 1.0, 0.0);
+		glRotatef((pp->elevationf / 10.0), 1.0, 0.0, 0.0);
+		glRotatef((pp->twist / 10.0), 0.0, 0.0, 1.0);
+		glCallList(pp->obj);
+		draw_plane_speed_vector(gs, pp);
+		glDisable(GL_DEPTH_TEST);
+
+
+
+		glLoadIdentity();
+
+		gluLookAt(pp->x + gs->eyes.x, pp->y + gs->eyes.y, pp->z + gs->eyes.z, pp->x, pp->y, pp->z, 0, 1, 0);
+		glPopMatrix();
+		break;
+	}
+	if (gs->light) {
+
+		glDisable(GL_COLOR_MATERIAL);
+		glDisable(GL_LIGHTING);
+	}
+}
+void draw_game_flghit(gameState * gs, plane *pp) {
 
 
 	
@@ -1222,7 +1313,7 @@ void draw_game(gameState * gs, plane *pp) {
 	glCallList(WORLD_OBJECT);
 	glCallList(RUNWAY_STRIPES);
 	glCallList(LIGHTS);
-
+	glCallList(SC_WORLD);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glPushMatrix();

@@ -264,6 +264,9 @@ void object_viewer_key(unsigned char k, int x, int y) {
 	case 'z':
 		object3Dview = MYMOUNTAIN;
 		break;
+	case 'e':
+		object3Dview = SC_WORLD;
+		break;
 	case ':':
 		lgs->polymod = GL_FILL;
 
