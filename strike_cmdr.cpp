@@ -62,6 +62,7 @@ typedef struct RSShowCase {
 } RSShowCase;
 
 std::vector<RSShowCase> showCases;
+std::map<std::string, RSEntity*> objectCache;
 
 void ParseObjList(IffLexer* lexer) {
 
@@ -86,11 +87,14 @@ void ParseObjList(IffLexer* lexer) {
 
 	for (int objIndex = 0; objIndex < numObjectInList; objIndex++) {
 		char objName[9];
+		std::string hash;
+
 		RSShowCase showCase;
 
 		for (int k = 0; k < 9; k++)
 			objName[k] = stream.ReadByte();
 		ConvertToUpperCase(objName);
+		
 		for (int k = 0; k < 20; k++)
 			showCase.displayName[k] = stream.ReadByte();
 
@@ -111,9 +115,13 @@ void ParseObjList(IffLexer* lexer) {
 		uint32_t fixedPointDist = stream.ReadInt32LE();
 		showCase.cameraDist = (fixedPointDist >> 8) + (fixedPointDist & 0xFF) / 255.0f;
 		//showCase.cameraDist = 200000;
-		printf("LOAD [%s]:%s\n", modelPath, showCase.displayName);
-		showCases.push_back(showCase);
+		hash = objName;
+		printf("LOAD [%s]:%s is {%s}\n", objName, showCase.displayName, hash.c_str());
+		
 
+		showCases.push_back(showCase);
+		objectCache.emplace(hash, showCase.entity);
+		printf("CACHE SIZE :%d\n", objectCache.size());
 	}
 }
 
@@ -141,7 +149,6 @@ void init_SC() {
 	TreEntry* objViewIFF = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.IFF");
 	TreEntry* objViewPAK = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.PAK");
 
-
 	PakArchive assets;
 	
 	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
@@ -157,8 +164,16 @@ void init_SC() {
 	light.y = -5;
 	light.z = 4;
 	Renderer.SetLight(&light);
+	area1.tre = tres[TRE_OBJECTS];
+	area1.objCache = objectCache;
 	area1.InitFromPAKFileName("ARENA.PAK");
-	//
+	
+	
+	std::map<std::string, RSEntity *> ::iterator it;
+	printf("CACHE SIZE :%d\n", objectCache.size());
+	for (it = objectCache.begin(); it != objectCache.end(); ++it) {
+		printf("OBJECT CACHE %s\n", it->first.c_str());
+	}
 	if (glIsList(F16)) {
 		glDeleteLists(F16, 1);
 		glNewList(F16, GL_COMPILE);
@@ -203,6 +218,7 @@ void init_SC() {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEndList();
 	}
+	glLoadIdentity();
 	glNewList(SC_WORLD, GL_COMPILE);
 	Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
 	glPointSize(1);
