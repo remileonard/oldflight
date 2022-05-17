@@ -1211,9 +1211,9 @@ void draw_game(gameState * gs, plane *pp) {
 
 	if (gs->light) {
 		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
 	}
 	glCallList(WORLD_OBJECT);
-	glCallList(RUNWAY_STRIPES);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glCallList(SC_WORLD);
@@ -1313,7 +1313,6 @@ void draw_game_flghit(gameState * gs, plane *pp) {
 	glCallList(WORLD_OBJECT);
 	glCallList(RUNWAY_STRIPES);
 	glCallList(LIGHTS);
-	glCallList(SC_WORLD);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glPushMatrix();
