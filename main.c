@@ -267,6 +267,12 @@ void object_viewer_key(unsigned char k, int x, int y) {
 	case 'e':
 		object3Dview = SC_WORLD;
 		break;
+	case 'r':
+		object3Dview++;
+		break;
+	case 't':
+		object3Dview--;
+		break;
 	case ':':
 		lgs->polymod = GL_FILL;
 
