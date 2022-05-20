@@ -3,6 +3,7 @@
 #include "libRealSpace/src/RSArea.h"
 #include "libRealSpace/src/RSPalette.h"
 #include "libRealSpace/src/Base.h"
+#include "libRealSpace/src/RSMission.h"
 #include <cctype>
   
 
@@ -10,6 +11,7 @@
 #define F16  1030
 #define F18  1040
 #define SC_WORLD 1100
+#define RUNWAY 1101
 
 enum TreID { TRE_GAMEFLOW, TRE_OBJECTS, TRE_MISC, TRE_SOUND, TRE_MISSIONS, TRE_TEXTURES };
 
@@ -149,6 +151,25 @@ void init_SC() {
 	TreEntry* objViewIFF = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.IFF");
 	TreEntry* objViewPAK = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.PAK");
 
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	IffLexer missionIFF;
+	missionIFF.InitFromRAM(mission->data, mission->size);
+	missionIFF.List(NULL);
+	RSMission missionObj;
+	missionObj.InitFromIFF(&missionIFF);
+
+	TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\TXM_LIST.IFF");
+	IffLexer texturesIFF;
+	texturesIFF.InitFromRAM(textures->data, textures->size);
+	texturesIFF.List(NULL);
+
+	TreEntry* stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\STRIBASE.IFF");
+	RSEntity *stribaseIFF= new RSEntity();
+	stribaseIFF->InitFromRAM(stribase->data, stribase->size);
+	
+	objectCache.emplace("STRIKEBASE", stribaseIFF);
+	
+
 	PakArchive assets;
 	
 	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
@@ -165,15 +186,15 @@ void init_SC() {
 	light.z = 4;
 	Renderer.SetLight(&light);
 	area1.tre = tres[TRE_OBJECTS];
-	area1.objCache = objectCache;
-	area1.InitFromPAKFileName("ARENA.PAK");
+	area1.objCache = &objectCache;
+	area1.InitFromPAKFileName("MAURITAN.PAK");
 	
 	
 	std::map<std::string, RSEntity *> ::iterator it;
 	printf("CACHE SIZE :%d\n", objectCache.size());
-	for (it = objectCache.begin(); it != objectCache.end(); ++it) {
-		printf("OBJECT CACHE %s\n", it->first.c_str());
-	}
+	int objprt = SC_WORLD;
+
+	
 	if (glIsList(F16)) {
 		glDeleteLists(F16, 1);
 		glNewList(F16, GL_COMPILE);
@@ -224,4 +245,12 @@ void init_SC() {
 	glPointSize(1);
 	glLineWidth(1);
 	glEndList();
+
+	for (it = objectCache.begin(); it != objectCache.end(); ++it) {
+		glNewList(++objprt, GL_COMPILE);
+		Renderer.DrawModel(it->second, LOD_LEVEL_MAX);
+		glEndList();
+		printf("OBJECT CACHE %s\n", it->first.c_str());
+	}
+
 }
