@@ -15,6 +15,46 @@
 
 enum TreID { TRE_GAMEFLOW, TRE_OBJECTS, TRE_MISC, TRE_SOUND, TRE_MISSIONS, TRE_TEXTURES };
 
+void printfbyte(uint8_t* data,size_t size) {
+	ByteStream stream(data);
+	size_t fsize = size;
+	uint8_t byte;
+	int cl = 0;
+	for (int read = 0; read < fsize; read++) {
+		byte = stream.ReadByte();
+		if (byte >= 40 && byte <= 90) {
+			printf("[%c]", char(byte));
+		}
+		else if (byte >= 97 && byte <= 122) {
+			printf("[%c]", char(byte));
+		}
+		else {
+			printf("[0x%X]", byte);
+		}
+		if (cl > 2) {
+			printf("\n");
+			cl = 0;
+		}
+		else {
+			printf("\t");
+			cl++;
+		}
+
+	}
+}
+void printChunkGlobal(IffChunk* chunk, const char* name) {
+	printf("PARSING %s\n", name);
+	if (chunk == NULL) {
+		printf("NO CHUNK\n");
+		return;
+	}
+	if (chunk->data == NULL) {
+		printf("%s : NO DATA\n", name);
+		return;
+	}
+	printfbyte(chunk->data, chunk->size);
+	printf("\n");
+}
 
 typedef struct TreNameID {
     TreID id;
@@ -131,13 +171,13 @@ void ParseObjList(IffLexer* lexer) {
 
 void init_SC() {
 	
-    SetBase("G:/DOS/SC");
+    SetBase("F:/tools/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();
 		printf("loading %s ...", nameIds[i].filename);
         tre->InitFromFile(nameIds[i].filename);
-
+		tre->List(stdout);
 		if (tre->IsValid()) {
 			tres.push_back(tre);
 			printf("... Ok \n");
@@ -151,6 +191,24 @@ void init_SC() {
 	TreEntry* objViewIFF = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.IFF");
 	TreEntry* objViewPAK = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.PAK");
 
+
+	TreEntry* mid1Pack = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\MIDGAMES\\MID1.PAK");
+	PakArchive mid1Asset;
+	mid1Asset.InitFromRAM("MID1.PAK", mid1Pack->data, mid1Pack->size);
+	mid1Asset.List(stdout);
+	for (int j = 0; j < mid1Asset.entries.size(); j++) {
+		printf("ENTRY %d\n", j);
+		printfbyte(mid1Asset.entries[j]->data, mid1Asset.entries[j]->size);
+		printf("\nEND\n", j);
+	}
+
+
+	PakArchive assets;
+
+	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
+	assets.List(stdout);
+
+
 	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
@@ -158,21 +216,25 @@ void init_SC() {
 	RSMission missionObj;
 	missionObj.InitFromIFF(&missionIFF);
 
-	TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\TXM_LIST.IFF");
+	TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\ACC_LIST.IFF");
 	IffLexer texturesIFF;
+	
 	texturesIFF.InitFromRAM(textures->data, textures->size);
 	texturesIFF.List(NULL);
+	IffChunk* textureIFFChunk = texturesIFF.GetChunkByID('MAPS');
+	printChunkGlobal(textureIFFChunk, "MAPS");
 
-	TreEntry* stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\STRIBASE.IFF");
-	RSEntity *stribaseIFF= new RSEntity();
-	stribaseIFF->InitFromRAM(stribase->data, stribase->size);
+	printf("%s\n", "..\\..\\DATA\\OBJECTS\\RWYEXT18.IFF");
+	TreEntry* stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\RWYEXT18.IFF");
+	IffLexer stribaseIFF;
+	stribaseIFF.InitFromRAM(stribase->data, stribase->size);
+	stribaseIFF.List(NULL);
 	
-	objectCache.emplace("STRIKEBASE", stribaseIFF);
-	
-
-	PakArchive assets;
-	
-	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
+	printf("%s\n", "..\\..\\DATA\\OBJECTS\\BMAIN.IFF");
+	stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\RWYEXT27.IFF");
+	IffLexer runLoadIff;
+	runLoadIff.InitFromRAM(stribase->data, stribase->size);
+	runLoadIff.List(NULL);
 
 	IffLexer objToDisplay;
 	objToDisplay.InitFromRAM(objViewIFF->data, objViewIFF->size);
@@ -245,6 +307,13 @@ void init_SC() {
 	glPointSize(1);
 	glLineWidth(1);
 	glEndList();
+
+
+	for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
+		RSEntity *obj = new RSEntity();
+		obj->InitFromRAM(tres[TRE_OBJECTS]->entries[i]->data, tres[TRE_OBJECTS]->entries[i]->size);
+		objectCache.emplace(tres[TRE_OBJECTS]->entries[i]->name, obj);
+	}
 
 	for (it = objectCache.begin(); it != objectCache.end(); ++it) {
 		glNewList(++objprt, GL_COMPILE);
