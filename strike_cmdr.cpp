@@ -171,7 +171,7 @@ void ParseObjList(IffLexer* lexer) {
 
 void init_SC() {
 	
-    SetBase("F:/tools/SC");
+    SetBase("G:/DOS/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();
@@ -192,7 +192,7 @@ void init_SC() {
 	TreEntry* objViewPAK = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.PAK");
 
 
-	TreEntry* mid1Pack = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\MIDGAMES\\MID1.PAK");
+	/*TreEntry* mid1Pack = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\MIDGAMES\\MID1.PAK");
 	PakArchive mid1Asset;
 	mid1Asset.InitFromRAM("MID1.PAK", mid1Pack->data, mid1Pack->size);
 	mid1Asset.List(stdout);
@@ -200,7 +200,7 @@ void init_SC() {
 		printf("ENTRY %d\n", j);
 		printfbyte(mid1Asset.entries[j]->data, mid1Asset.entries[j]->size);
 		printf("\nEND\n", j);
-	}
+	}*/
 
 
 	PakArchive assets;
@@ -210,13 +210,14 @@ void init_SC() {
 
 
 	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
-	missionIFF.List(NULL);
+	//missionIFF.List(NULL);
 	RSMission missionObj;
 	missionObj.InitFromIFF(&missionIFF);
 
-	TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\ACC_LIST.IFF");
+	/*TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\ACC_LIST.IFF");
 	IffLexer texturesIFF;
 	
 	texturesIFF.InitFromRAM(textures->data, textures->size);
@@ -234,7 +235,7 @@ void init_SC() {
 	stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\RWYEXT27.IFF");
 	IffLexer runLoadIff;
 	runLoadIff.InitFromRAM(stribase->data, stribase->size);
-	runLoadIff.List(NULL);
+	runLoadIff.List(NULL);*/
 
 	IffLexer objToDisplay;
 	objToDisplay.InitFromRAM(objViewIFF->data, objViewIFF->size);
@@ -250,7 +251,7 @@ void init_SC() {
 	area1.tre = tres[TRE_OBJECTS];
 	area1.objCache = &objectCache;
 	area1.InitFromPAKFileName("MAURITAN.PAK");
-	
+	//area1.InitFromPAKFileName("ARENA.PAK");
 	
 	std::map<std::string, RSEntity *> ::iterator it;
 	printf("CACHE SIZE :%d\n", objectCache.size());
@@ -308,7 +309,6 @@ void init_SC() {
 	glLineWidth(1);
 	glEndList();
 
-
 	for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
 		RSEntity *obj = new RSEntity();
 		obj->InitFromRAM(tres[TRE_OBJECTS]->entries[i]->data, tres[TRE_OBJECTS]->entries[i]->size);
@@ -321,5 +321,5 @@ void init_SC() {
 		glEndList();
 		printf("OBJECT CACHE %s\n", it->first.c_str());
 	}
-
+	
 }
