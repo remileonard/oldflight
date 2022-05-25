@@ -1204,7 +1204,7 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		}
 	}
 }
-void draw_game(gameState * gs, plane *pp) {
+void draw_game_sc(gameState * gs, plane *pp) {
 
 
 	glPolygonMode(GL_FRONT_AND_BACK, gs->polymod);
@@ -1296,7 +1296,7 @@ void draw_game(gameState * gs, plane *pp) {
 		glDisable(GL_LIGHTING);
 	}
 }
-void draw_game_flghit(gameState * gs, plane *pp) {
+void draw_game(gameState * gs, plane *pp) {
 
 
 	
