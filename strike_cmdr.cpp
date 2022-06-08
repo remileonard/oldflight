@@ -78,6 +78,7 @@ std::vector<TreArchive*> tres;
 
 
 extern "C" void init_SC();
+extern "C" void test_SC();
 SCRenderer Renderer;
 RSArea area1;
 RSArea area2;
@@ -168,7 +169,41 @@ void ParseObjList(IffLexer* lexer) {
 }
 
 #define max_int 500000
+void test_SC() {
+	SetBase("G:/DOS/SC");
+	printf("Strike commander assets\n");
+	for (size_t i = 0; i < NUM_TRES; i++) {
+		TreArchive* tre = new TreArchive();
+		printf("loading %s ...", nameIds[i].filename);
+		tre->InitFromFile(nameIds[i].filename);
+		tre->List(stdout);
+		if (tre->IsValid()) {
+			tres.push_back(tre);
+			printf("... Ok \n");
+		}
+		else {
+			printf("pas cool :( \n");
+			exit(0);
+		}
+	}
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	IffLexer missionIFF;
+	missionIFF.InitFromRAM(mission->data, mission->size);
+	RSMission missionObj;
+	missionObj.InitFromIFF(&missionIFF);
+	missionObj.PrintMissionInfos();
+	TreEntry* missionm = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1B.IFF");
+	IffLexer missionIFFm;
+	missionIFFm.InitFromRAM(missionm->data, missionm->size);
+	RSMission missionObjm;
+	missionObjm.InitFromIFF(&missionIFFm);
+	missionObjm.PrintMissionInfos();
+	area1.tre = tres[TRE_OBJECTS];
+	area1.objCache = &objectCache;
+	area1.InitFromPAKFileName("MAURITAN.PAK");
 
+
+}
 void init_SC() {
 	
     SetBase("G:/DOS/SC");
@@ -209,7 +244,7 @@ void init_SC() {
 	assets.List(stdout);
 
 
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1C.IFF");
 	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
@@ -255,8 +290,7 @@ void init_SC() {
 	
 	std::map<std::string, RSEntity *> ::iterator it;
 	printf("CACHE SIZE :%d\n", objectCache.size());
-	int objprt = SC_WORLD;
-
+	
 	
 	if (glIsList(F16)) {
 		glDeleteLists(F16, 1);
@@ -303,23 +337,39 @@ void init_SC() {
 		glEndList();
 	}
 	glLoadIdentity();
+
+	
+
+	int objprt = SC_WORLD + 1;
+	/*for (int i = 0; i < 324; i++) {
+		glNewList(objprt++, GL_COMPILE);
+		Renderer.RenderWorldByID(&area1, BLOCK_LOD_MAX, 400, i);
+		glPointSize(1);
+		glLineWidth(1);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEndList();
+	}*/
+
 	glNewList(SC_WORLD, GL_COMPILE);
 	Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
 	glPointSize(1);
 	glLineWidth(1);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEndList();
 
-	for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
+	/*for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
 		RSEntity *obj = new RSEntity();
 		obj->InitFromRAM(tres[TRE_OBJECTS]->entries[i]->data, tres[TRE_OBJECTS]->entries[i]->size);
 		objectCache.emplace(tres[TRE_OBJECTS]->entries[i]->name, obj);
 	}
 
 	for (it = objectCache.begin(); it != objectCache.end(); ++it) {
-		glNewList(++objprt, GL_COMPILE);
+		glNewList(objprt++, GL_COMPILE);
 		Renderer.DrawModel(it->second, LOD_LEVEL_MAX);
 		glEndList();
 		printf("OBJECT CACHE %s\n", it->first.c_str());
-	}
+	}*/
 	
 }

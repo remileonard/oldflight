@@ -23,7 +23,7 @@ void mouse_mouve(int x, int y) {
 				msdy = y - msy;
 				lgs->objz -= msdy * 0.5;
 			}
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 		case SIMULATION:
 			break;
@@ -269,9 +269,11 @@ void object_viewer_key(unsigned char k, int x, int y) {
 		break;
 	case 'r':
 		object3Dview++;
+		printf("%d, SC[%d]\n", object3Dview, object3Dview-SC_WORLD-1);
 		break;
 	case 't':
 		object3Dview--;
+		printf("%d, SC[%d]\n", object3Dview, object3Dview - SC_WORLD-1);
 		break;
 	case ':':
 		lgs->polymod = GL_FILL;
@@ -285,7 +287,7 @@ void object_viewer_key(unsigned char k, int x, int y) {
 		lgs->polymod = GL_POINT;
 		break;
 	}
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 void object_special_viewerKey(int k, int x, int y) {
 	switch (k) {
@@ -326,6 +328,9 @@ void presentation_key(unsigned char k, int x, int y) {
 	case '6':
 		init_game(k);
 		break;
+	case 's':
+		init_strike_commander(k);
+		break;
 	}
 }
 void get_time() {
@@ -343,6 +348,9 @@ void get_time() {
 void idle(void) {
 	
 }
+void idleViewer(void) {
+	glutPostRedisplay();
+}
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
 		glutIdleFunc(NULL);
@@ -350,6 +358,55 @@ void visible(int vis) {
 		glutIdleFunc(NULL);
 }
 
+
+void strike_commander(int va) {
+	int zetimer1, zetimer2;
+	if (lgs->sts == SIMULATION) {
+		lgs->ticks++;
+		zetimer1 = glutGet(GLUT_ELAPSED_TIME);
+		simulation(lgs, lpp, msx, msy, XMIDDLE, YMIDDLE, XMAXSCREEN, YMAXSCREEN);
+		setClearColor(grey12);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+		if (!lgs->hud) {
+			draw_cockpit(lpp, halftone, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
+			glCallList(COCKPIT);
+
+			int w = XMAXSCREEN - 1;
+			int h = YMAXSCREEN / 2 - 1;
+			set_view_screen(lgs->real_fov, w, h, h);
+			draw_game_sc(lgs, lpp);
+		}
+		else {
+			set_view_screen(lgs->real_fov, XMAXSCREEN, YMAXSCREEN, 0);
+
+			draw_game_sc(lgs, lpp);
+
+			if (lgs->debug) {
+				draw_debug_text(lgs, lpp, msx, msy);
+				glCallList(DEBUG_TEXT);
+			}
+			else {
+				draw_hud(lgs, lpp, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
+				glCallList(HUD);
+			}
+
+
+
+			glCallList(REPORT_CARD);
+
+
+		}
+		draw_mouse_cursor(XMAXSCREEN, YMAXSCREEN, msx, msy);
+		glFlush();
+		glutSwapBuffers();
+		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
+		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
+		get_time();
+		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
+	}
+}
 
 void flight_simulation(int va) {
 	int zetimer1, zetimer2;
@@ -454,7 +511,43 @@ void flight_demo_simulation(int va) {
 		glutTimerFunc(1000 / lgs->tps, flight_demo_simulation, va);
 	}
 }
-void init_game(unsigned char k) {	
+void init_strike_commander(unsigned char k) {
+	free_memory();
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
+	glDisable(GL_LIGHT3);
+
+	glEnable(GL_LIGHT0);
+	float lmodel_LVW[] = { 0.5 };
+	float lmodel_ambient[] = { 0.02, 0.02, 0.02, 1.0 };
+	float lmodel_TWO[] = { GL_TRUE };
+
+	glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, lmodel_LVW);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
+	reset_gs(lgs);
+	lpp = init_plane();
+	lgs->sts = SIMULATION;
+	lgs->hud = 0;
+	
+	set_f16(lgs, lpp);
+	
+	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+	glutReshapeFunc(reshape_3d);
+	glutDisplayFunc(idle);
+	glutIdleFunc(NULL);
+
+	glutMotionFunc(mouse_mouve);
+	glutMouseFunc(mouse_click);
+	glutPassiveMotionFunc(mouse_mouve);
+	glutKeyboardFunc(simul_key);
+	glutSpecialFunc(special_key);
+	reshape_3d(XMAXSCREEN, YMAXSCREEN);
+	glutTimerFunc(1000 / lgs->tps, strike_commander, 0);
+}
+void init_game(unsigned char k) {
 	free_memory();
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHT1);
@@ -559,8 +652,8 @@ void draw_3D_viewer(void) {
 	
 	glutSwapBuffers();
 	if (!moveok && !zoomok) {
-		lgs->cyaw += msdx * 0.5 *0.1;
-		lgs->cpitch -= msdy * 0.5*0.1;
+		//lgs->cyaw += msdx * 0.5 *0.1;
+		//lgs->cpitch -= msdy * 0.5*0.1;
 	}
 }
 void init_3D_viewer(int va) {
@@ -570,14 +663,12 @@ void init_3D_viewer(int va) {
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
-	//glutIdleFunc(NULL);
-	//glutPassiveMotionFunc(mouse_mouve);
-	glutDisplayFunc(draw_3D_viewer);
-	glutIdleFunc(idle);
 	glutReshapeFunc(reshape_3d);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(object_viewer_key);
 	glutSpecialFunc(object_special_viewerKey);
+	glutIdleFunc(idleViewer);
+	glutDisplayFunc(draw_3D_viewer);
 }
 #ifdef W32
 #ifdef DEBUG
@@ -627,8 +718,8 @@ int main_start(int argc, char *argv[]) {
 	make_lights();
 	make_mountain_zone(0, 0, 100, lgs);
 	make_textures_cube();
-	//init_SC();
-	test_SC();
+	init_SC();
+	//test_SC();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_LINE_SMOOTH);

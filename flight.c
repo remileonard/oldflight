@@ -1208,7 +1208,6 @@ void draw_game_sc(gameState * gs, plane *pp) {
 
 
 	glPolygonMode(GL_FRONT_AND_BACK, gs->polymod);
-
 	if (gs->light) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
@@ -1216,7 +1215,9 @@ void draw_game_sc(gameState * gs, plane *pp) {
 	glCallList(WORLD_OBJECT);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_TEXTURE_2D);
 	glCallList(SC_WORLD);
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	switch (gs->view_switch) {
 	case PILOTE:
