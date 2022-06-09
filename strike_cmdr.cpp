@@ -79,6 +79,7 @@ std::vector<TreArchive*> tres;
 
 extern "C" void init_SC();
 extern "C" void test_SC();
+extern "C" float getY(float x, float z);
 SCRenderer Renderer;
 RSArea area1;
 RSArea area2;
@@ -168,6 +169,20 @@ void ParseObjList(IffLexer* lexer) {
 	}
 }
 
+float getY(float x, float z) {
+	int blocX = (int)((x / 1000000.0 * 360000.0) + 180000)/20000;
+	int blocY = (int)((z / 1000000.0 * 360000.0) + 180000)/20000;
+
+	printf("CURRENT BLOCK %d, current Y:%f [%f,%f]-{%d,%d}\n", 
+		blocY * 18 + blocX, 
+		area1.elevation[blocY*18 + blocX],
+		x,
+		z,
+		blocX,
+		blocY
+	);
+	return (area1.elevation[blocY * 18 + blocX]);
+}
 #define max_int 500000
 void test_SC() {
 	SetBase("G:/DOS/SC");
@@ -226,51 +241,10 @@ void init_SC() {
 	TreEntry* objViewIFF = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.IFF");
 	TreEntry* objViewPAK = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\GAMEFLOW\\OBJVIEW.PAK");
 
-
-	/*TreEntry* mid1Pack = tres[TRE_GAMEFLOW]->GetEntryByName("..\\..\\DATA\\MIDGAMES\\MID1.PAK");
-	PakArchive mid1Asset;
-	mid1Asset.InitFromRAM("MID1.PAK", mid1Pack->data, mid1Pack->size);
-	mid1Asset.List(stdout);
-	for (int j = 0; j < mid1Asset.entries.size(); j++) {
-		printf("ENTRY %d\n", j);
-		printfbyte(mid1Asset.entries[j]->data, mid1Asset.entries[j]->size);
-		printf("\nEND\n", j);
-	}*/
-
-
 	PakArchive assets;
 
 	assets.InitFromRAM("OBJVIEW.PAK", objViewPAK->data, objViewPAK->size);
 	assets.List(stdout);
-
-
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1C.IFF");
-	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
-	IffLexer missionIFF;
-	missionIFF.InitFromRAM(mission->data, mission->size);
-	//missionIFF.List(NULL);
-	RSMission missionObj;
-	missionObj.InitFromIFF(&missionIFF);
-
-	/*TreEntry* textures = tres[TRE_TEXTURES]->GetEntryByName("..\\..\\DATA\\TXM\\ACC_LIST.IFF");
-	IffLexer texturesIFF;
-	
-	texturesIFF.InitFromRAM(textures->data, textures->size);
-	texturesIFF.List(NULL);
-	IffChunk* textureIFFChunk = texturesIFF.GetChunkByID('MAPS');
-	printChunkGlobal(textureIFFChunk, "MAPS");
-
-	printf("%s\n", "..\\..\\DATA\\OBJECTS\\RWYEXT18.IFF");
-	TreEntry* stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\RWYEXT18.IFF");
-	IffLexer stribaseIFF;
-	stribaseIFF.InitFromRAM(stribase->data, stribase->size);
-	stribaseIFF.List(NULL);
-	
-	printf("%s\n", "..\\..\\DATA\\OBJECTS\\BMAIN.IFF");
-	stribase = tres[TRE_OBJECTS]->GetEntryByName("..\\..\\DATA\\OBJECTS\\RWYEXT27.IFF");
-	IffLexer runLoadIff;
-	runLoadIff.InitFromRAM(stribase->data, stribase->size);
-	runLoadIff.List(NULL);*/
 
 	IffLexer objToDisplay;
 	objToDisplay.InitFromRAM(objViewIFF->data, objViewIFF->size);
@@ -352,11 +326,7 @@ void init_SC() {
 	}*/
 
 	glNewList(SC_WORLD, GL_COMPILE);
-	Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
-	glPointSize(1);
-	glLineWidth(1);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
 	glEndList();
 
 	/*for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
