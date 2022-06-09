@@ -297,6 +297,8 @@ typedef struct gameState {
 	int timeit;													/* TRUE if displaying timing info */
 	long timer;
 	float fps;
+	float groundlevel;
+	short nocrash;
 	/*
 	 *  The following are used to adjust for frame rate speed changes
 	 */

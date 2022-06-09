@@ -365,6 +365,7 @@ void strike_commander(int va) {
 		lgs->ticks++;
 		zetimer1 = glutGet(GLUT_ELAPSED_TIME);
 		simulation(lgs, lpp, msx, msy, XMIDDLE, YMIDDLE, XMAXSCREEN, YMAXSCREEN);
+		lgs->groundlevel =  getY(lpp->x, lpp->z);
 		setClearColor(grey12);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -528,12 +529,15 @@ void init_strike_commander(unsigned char k) {
 
 	glutSetCursor(GLUT_CURSOR_NONE);
 	reset_gs(lgs);
+	lgs->nocrash = 1;
 	lpp = init_plane();
 	lgs->sts = SIMULATION;
 	lgs->hud = 0;
 	
 	set_f16(lgs, lpp);
-	
+	lpp->x = -70800.0f * 1000000.0f / 360000.0f;
+	lpp->z = -132360.0f * 1000000.0f / 360000.0f;
+	lpp->azimuthf = 1800.0f;
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
 	glutDisplayFunc(idle);

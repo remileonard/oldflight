@@ -521,6 +521,8 @@ struct gameState* init_game_state() {
 	return (gs);
 }
 void reset_gs(struct gameState *gs) {
+	gs->groundlevel = .5;
+	gs->nocrash = 0;
 	gs->tx = TOWER_EX;
 	gs->ty = TOWER_EY;
 	gs->tz = TOWER_EZ;
@@ -952,7 +954,7 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		/****************************************************************/
 		/* flame out		*/
 		if (pp->y > 50000.0) pp->thrust = 0;	
-		else if (pp->y > 4.0) {
+		else if (pp->y > gs->groundlevel + 4.0) {
 			/* not on ground	*/
 			if (pp->on_ground) {
 				/* if was on ground	*/
@@ -965,39 +967,41 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 			}
 			pp->on_ground = FALSE;
 		}
-		else if (pp->y < .5) {
+		else if (pp->y < gs->groundlevel) {
 			/* check for on the ground */
-			if (IN_BOX(pp, -800.0, 100.0, -9500.0, 1000.0) ||
-				IN_BOX(pp, 100.0, 1300.0, -2500.0, -1500.0) ||
-				IN_BOX(pp, -2300.0, -800.0, -4900.0, -2000.0))
-				/* and not on ground before */
-				if (!pp->on_ground) {			
-					int rating;
-					/* increase drag	*/
-					pp->Cdp *= 3.0;			
-					/* allow reverse engines*/
-					pp->min_throttle = -pp->max_throttle;	
-					rating = report_card(-pp->climbspeed, pp->twist, (int)(pp->vx * gs->tps), (int)(-pp->vz * pp->fps_knots), pp->wheels, pp);
-					/* oops - you crashed	*/
-					if (rating == -1) {		
-						/* set to exploding	*/
-						pp->status = MEXPLODE;	
-						/* increment count	*/
-						pp->lost++;		
+			if (gs->nocrash == 0) {
+				if (IN_BOX(pp, -800.0, 100.0, -9500.0, 1000.0) ||
+					IN_BOX(pp, 100.0, 1300.0, -2500.0, -1500.0) ||
+					IN_BOX(pp, -2300.0, -800.0, -4900.0, -2000.0))
+					/* and not on ground before */
+					if (!pp->on_ground) {
+						int rating;
+						/* increase drag	*/
+						pp->Cdp *= 3.0;
+						/* allow reverse engines*/
+						pp->min_throttle = -pp->max_throttle;
+						rating = report_card(-pp->climbspeed, pp->twist, (int)(pp->vx * gs->tps), (int)(-pp->vz * pp->fps_knots), pp->wheels, pp);
+						/* oops - you crashed	*/
+						if (rating == -1) {
+							/* set to exploding	*/
+							pp->status = MEXPLODE;
+							/* increment count	*/
+							pp->lost++;
+						}
+						else {
+							pp->fuel += rating << 7;
+							if (pp->fuel > (100 << 7))  pp->fuel = 100 << 7;
+							pp->max_throttle = 100;
+						}
+						rebuild_status();
 					}
-					else {
-						pp->fuel += rating << 7;
-						if (pp->fuel > (100 << 7))  pp->fuel = 100 << 7;
-						pp->max_throttle = 100;
-					}
-					rebuild_status();
+					else;
+				else {
+					make_crash("You crashed into the swamps", pp);
+					//broadcast("crashed into the swamps");
 				}
-				else;
-			else {
-				make_crash("You crashed into the swamps", pp);
-				//broadcast("crashed into the swamps");
 			}
-			pp->ptw[3][1] = pp->y = 0.0;
+			pp->ptw[3][1] = pp->y = gs->groundlevel;
 			pp->on_ground = TRUE;
 			if (pp->status > MEXPLODE) {
 				/* kill negative elevation */
