@@ -323,16 +323,31 @@ void get_time() {
 	
 	int zetimer = glutGet(GLUT_ELAPSED_TIME);
 	int timeelapsed = zetimer - lgs->timer +1;
-	if (lgs->ticks == 20) {
+	int inttps=0;
+	if (lgs->ticks == 60) {
 		float realtps = lgs->ticks / (timeelapsed/1000.0f);
-		frames = realtps / 20;
+		frames = realtps / 60;
+		inttps = realtps;
+		if (inttps > 0) {
+			if (inttps > lgs->tps) {
+				lgs->tps++;
+			}
+			else if (inttps < lgs->tps) {
+				lgs->tps--;
+			}
+			//lgs->tps = tpsmiddle;
+			lpp->gravity = G_ACC / lgs->tps / lgs->tps;
+			lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);
+			lpp->Lmax = lpp->LmaxDEF * lpp->gravity;
+			lpp->Lmin = lpp->LminDEF * lpp->gravity;
+		}
 		lgs->fps = realtps;
 		lgs->ticks = 0;
 		lgs->timer = zetimer;
 	}
 }
 void idle(void) {
-	
+	glutPostRedisplay();
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -387,7 +402,7 @@ void flight_simulation(int va) {
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
 		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
-		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
+		//glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
 	}
 }
 void flight_demo_simulation(int va) {
@@ -485,8 +500,8 @@ void init_game(unsigned char k) {
 	}
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
-	glutDisplayFunc(idle);
-	glutIdleFunc(NULL);
+	glutDisplayFunc(flight_simulation);
+	glutIdleFunc(idle);
 
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
@@ -494,7 +509,7 @@ void init_game(unsigned char k) {
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
-	glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
+	//glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
 }
 void init_demo(int va) {
     if (lgs->sts == PRESENTATION) {
@@ -561,8 +576,6 @@ void init_3D_viewer(int va) {
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
-	//glutIdleFunc(NULL);
-	//glutPassiveMotionFunc(mouse_mouve);
 	glutDisplayFunc(draw_3D_viewer);
 	glutIdleFunc(idle);
 	glutReshapeFunc(reshape_3d);

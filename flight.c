@@ -1197,7 +1197,7 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		else {
 			itemp = -pp->thrust;
 		}
-		if (gs->tick_counter%(100*(gs->tps/30)) == 1) {
+		if (gs->tick_counter%(100*gs->tps+1) == 1) {
 			pp->fuel_rate = fuel_consump(pp->Mthrust, pp->W);
 			pp->fuel -= (int)(itemp * pp->fuel_rate);
 			pp->inverse_mass = G_ACC / (pp->W + pp->fuel / 12800.0f * pp->fuel_weight);
