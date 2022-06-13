@@ -5,7 +5,188 @@
 #include "libRealSpace/src/Base.h"
 #include "libRealSpace/src/RSMission.h"
 #include <cctype>
-  
+typedef struct plane {
+	/* plane type ("F-15")		*/
+	char* plane_type;
+	long planeid;
+	/* flight version	*/
+	char  version;
+	/* type of packet	*/
+	char  cmd;
+	/* plane type		*/
+	short type;
+	short alive;
+	char  myname[15 + 1];
+	unsigned int status;
+	/* for msgs these 2 shorts */
+	unsigned short won;
+	/* hold the plane id	*/
+	unsigned short lost;
+
+	/* plane position	*/
+	float x;
+	float y;
+	float z;
+
+	short twist;
+	/*roll, elevation, azimuth speeds	* /
+	/* in 10'ths degrees per tick	*/
+	int roll_speed;
+
+	float azimuthf;
+	float elevationf;
+
+	/* roll, elevation, azimuth speeds	*/
+	/* in 10'ths degrees per tick	*/
+	float elevation_speedf;
+	float azimuth_speedf;
+
+	/* missile data		*/
+	short mstatus;
+	float mx;
+	float my;
+	float mz;
+	float last_mx;
+	float last_my;
+	float last_mz;
+	long mkill;
+	int airspeed;
+	int thrust;
+
+
+	char mtype;
+
+	/* rollers position 	*/
+	float rollers;
+	float rudder;
+	/* elevator position 	*/
+	float elevator;
+	float ELEVF_CSTE;
+	float ROLLFF_CSTE;
+	float LminDEF;
+	float LmaxDEF;
+	/* maximum flap deflection	*/
+	float Fmax;
+	float Smax;
+
+
+	/* last plane position	*/
+	float last_px;
+	float last_py;
+	float last_pz;
+	/* plane acceleration	*/
+	float ax;
+	float ay;
+	float az;
+	/* drag force in y and z	*/
+	float ydrag;
+	float zdrag;
+	/* fuel consumption rate	*/
+	float fuel_rate;
+	/* lift acceleration		*/
+	float lift;
+	/* maximum height for ground effect	*/
+	float gefy;
+	/* angle of attack for wing		*/
+	float ae;
+	/* max and min coefficient of lift	*/
+	float max_cl;
+	float min_cl;
+	/* wing angle tilt due to flaps		*/
+	float tilt_factor;
+	/* spoiler factors on lift and drag	*/
+	float Splf;
+	float Spdf;
+	/* air density / 2.0, speed of sound	*/
+	float ro2;
+	float sos;
+	/* mach #, crest critical #, ratio	*/
+	float mach;
+	float mcc;
+	float mratio;
+	/* coefficients of lift and drag	*/
+	float uCl;
+	float Cl;
+	float Cd;
+	float Cdc;
+	float kl;
+	/* ground effect, ro/2*Vz*s		*/
+	float qs;
+	/* weight of fuel			*/
+	float fuel_weight;
+	/* 1.0 / mass of plane			*/
+	float inverse_mass;
+	/* plane design parameters	*/
+	float s;
+	float W;
+	float Mthrust;
+	float b;
+	float Cdp;
+	float ipi_AR;
+	float ie_pi_AR;
+	float Lmax;
+	float Lmin;
+	float ELEVF;
+	float ROLLF;
+	float pilot_y;
+	float pilot_z;
+	float last_zdrag;
+
+	short val;
+	/* TRUE if plane is on ground	*/
+	short on_ground;
+	/* TRUE if the wheels are down	*/
+	short wheels;
+	/* wheel position 	*/
+	/* used only by F16W		*/
+	short wheels_retracting;
+	/* >= 0 if the gear is stuck	*/
+	short landing_gear_stuck;
+	/* TRUE in autopilot mode	*/
+	short autopilot;
+	/* TRUE if wing g-limit is hit	*/
+	short g_limit;
+	/* fuel (0 - 12800)		*/
+	short fuel;
+	/* upper limit on engines	*/
+	short max_throttle;
+	/* lower limit on engines	*/
+	short min_throttle;
+	/* max rockets and sidewinders	*/
+	short MAX_RK;
+	short MAX_SW;
+	/* minimum lift-up speed fps	*/
+	short MIN_LIFT_SPEED;
+	short last_airspeed;
+	short target_speed;
+	short climbspeed;
+	short last_climbspeed;
+	short target_climb;
+	/* TRUE if wing is stalling	*/
+	short wing_stall;
+	/* flap and spoiler settings	*/
+	int flaps;
+	int spoilers;
+	int obj;
+	/* plane velocity */
+	float vx;
+	float vy;
+	float vz;
+	/* missile velocity */
+	float missile_vx;
+	float missile_vy;
+	float missile_vz;
+	/* fps to knots conversion factor */
+	float fps_knots;
+	/* the effect of gravity realtive to tps */
+	float gravity;
+	/* number of armaments		*/
+	int sidewinders, rockets;
+	/* my ptw matrix, temp matrix	*/
+	float ptw[4][4];
+	float incremental[4][4];
+
+} plane;
 
 #define F15  1020
 #define F16  1030
@@ -62,6 +243,14 @@ typedef struct TreNameID {
 
 } TreNameID;
 
+
+char* strtoupper(char* dest, const char* src) {
+	char* result = dest;
+	while (*dest++ = toupper(*src++));
+	return result;
+}
+
+
 #define NUM_TRES 6
 TreNameID nameIds[NUM_TRES] =
 {
@@ -78,15 +267,12 @@ std::vector<TreArchive*> tres;
 
 
 extern "C" void init_SC();
-extern "C" void test_SC();
 extern "C" float getY(float x, float z);
+extern "C" void setStartPosition(plane * pp);
+
 SCRenderer Renderer;
+RSMission missionObj;
 RSArea area1;
-RSArea area2;
-RSArea area3;
-RSArea area4;
-RSArea area5;
-RSArea area6;
 void ConvertToUpperCase(char *sPtr)
 {
 	while (*sPtr != '\0')
@@ -181,44 +367,10 @@ float getY(float x, float z) {
 		blocX,
 		blocY
 	);
-	return (area1.elevation[blocY * 18 + blocX]);
+	
+	return (area1.getGroundLevel(blocY * 18 + blocX, x, z));
 }
 #define max_int 500000
-void test_SC() {
-	SetBase("G:/DOS/SC");
-	printf("Strike commander assets\n");
-	for (size_t i = 0; i < NUM_TRES; i++) {
-		TreArchive* tre = new TreArchive();
-		printf("loading %s ...", nameIds[i].filename);
-		tre->InitFromFile(nameIds[i].filename);
-		tre->List(stdout);
-		if (tre->IsValid()) {
-			tres.push_back(tre);
-			printf("... Ok \n");
-		}
-		else {
-			printf("pas cool :( \n");
-			exit(0);
-		}
-	}
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
-	IffLexer missionIFF;
-	missionIFF.InitFromRAM(mission->data, mission->size);
-	RSMission missionObj;
-	missionObj.InitFromIFF(&missionIFF);
-	missionObj.PrintMissionInfos();
-	TreEntry* missionm = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1B.IFF");
-	IffLexer missionIFFm;
-	missionIFFm.InitFromRAM(missionm->data, missionm->size);
-	RSMission missionObjm;
-	missionObjm.InitFromIFF(&missionIFFm);
-	missionObjm.PrintMissionInfos();
-	area1.tre = tres[TRE_OBJECTS];
-	area1.objCache = &objectCache;
-	area1.InitFromPAKFileName("MAURITAN.PAK");
-
-
-}
 void init_SC() {
 	
     SetBase("G:/DOS/SC");
@@ -250,6 +402,22 @@ void init_SC() {
 	objToDisplay.InitFromRAM(objViewIFF->data, objViewIFF->size);
 
 	ParseObjList(&objToDisplay);
+
+
+	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	IffLexer missionIFF;
+	missionIFF.InitFromRAM(mission->data, mission->size);
+	missionObj.tre = tres[TRE_OBJECTS];
+	missionObj.objCache = &objectCache;
+	missionObj.InitFromIFF(&missionIFF);
+	missionObj.PrintMissionInfos();
+
+	char * mname = missionObj.getMissionAreaFile();
+	char areaName[9 + 4];
+
+	strtoupper(areaName, mname);
+	sprintf(areaName, "%s.PAK", areaName);
 	Renderer.Init(1);
 
 	Point3D light;
@@ -259,7 +427,7 @@ void init_SC() {
 	Renderer.SetLight(&light);
 	area1.tre = tres[TRE_OBJECTS];
 	area1.objCache = &objectCache;
-	area1.InitFromPAKFileName("MAURITAN.PAK");
+	area1.InitFromPAKFileName(areaName);
 	//area1.InitFromPAKFileName("ARENA.PAK");
 	
 	std::map<std::string, RSEntity *> ::iterator it;
@@ -269,45 +437,38 @@ void init_SC() {
 	if (glIsList(F16)) {
 		glDeleteLists(F16, 1);
 		glNewList(F16, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glScalef(1.5, 1.5, 1.5);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[0].entity, LOD_LEVEL_MAX);
 		glDisable(GL_TEXTURE_2D);
-		glLineWidth(1);
-		glPointSize(1);
-		glEnable(GL_BLEND);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPopAttrib();
 		glEndList();
 	}
 	if (glIsList(F15)) {
 		glDeleteLists(F15, 1);
 		glNewList(F15, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glScalef(1.5, 1.5, 1.5);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[2].entity, LOD_LEVEL_MAX);
 		glDisable(GL_TEXTURE_2D);
-		glLineWidth(1);
-		glPointSize(1);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPopAttrib();
 		glEndList();
 	}
 	
 	if (glIsList(F18)) {
 		glDeleteLists(F18, 1);
 		glNewList(F18, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glScalef(1.5, 1.5, 1.5);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[3].entity, LOD_LEVEL_MAX);
 		glDisable(GL_TEXTURE_2D);
-		glLineWidth(1);
-		glPointSize(1);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPopAttrib();
 		glEndList();
 	}
 	glLoadIdentity();
@@ -326,7 +487,10 @@ void init_SC() {
 	}*/
 
 	glNewList(SC_WORLD, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
+		Renderer.RenderMissionObjects(&missionObj);
+		glPopAttrib();
 	glEndList();
 
 	/*for (int i = 0; i < tres[TRE_OBJECTS]->entries.size(); i++) {
@@ -342,4 +506,16 @@ void init_SC() {
 		printf("OBJECT CACHE %s\n", it->first.c_str());
 	}*/
 	
+}
+void setStartPosition(plane* pp) {
+	PART* player;
+	player = missionObj.getPlayerCoord();
+	if (player != NULL) {
+		pp->x = player->XAxisRelative * 1000000.0f / 360000.0f;
+		pp->z = player->YAxisRelative * -1000000.0f / 360000.0f;
+		printf("STARTING POINT {%f,%f,%f} from [%d,%d,%d]\n", 
+			pp->x, pp->y, pp->z,
+			player->XAxisRelative, player->ZAxisRelative, player->YAxisRelative
+		);
+	}
 }

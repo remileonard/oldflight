@@ -589,7 +589,7 @@ void draw_hud(gameState *gs, plane *pp, int sc_width, int sc_height, float X_ADJ
 	}
 
 	glNewList(HUD, GL_COMPILE);
-
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(-0.5, sc_width + 0.5, -0.5, sc_height + .5);
@@ -1032,5 +1032,6 @@ void draw_hud(gameState *gs, plane *pp, int sc_width, int sc_height, float X_ADJ
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
+	glPopAttrib();
 	glEndList();
 }

@@ -1211,18 +1211,9 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 void draw_game_sc(gameState * gs, plane *pp) {
 
 
-	glPolygonMode(GL_FRONT_AND_BACK, gs->polymod);
-	if (gs->light) {
-		glEnable(GL_LIGHTING);
-		glEnable(GL_COLOR_MATERIAL);
-	}
-	glCallList(WORLD_OBJECT);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_TEXTURE_2D);
+	glCallList(SC_WORLD - 1);
 	glCallList(SC_WORLD);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
+
 	switch (gs->view_switch) {
 	case PILOTE:
 		glLoadIdentity();

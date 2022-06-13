@@ -955,6 +955,36 @@ void make_forest(int x, int y, int size, gameState *gs) {
 		set_tree(lx, ly, lz, gs);
 	}
 }
+void make_sc_world() {
+	static GLuint sky1[][3] = {
+	{-max_int,0,-max_int},
+	{-max_int,0,max_int},
+	{0,max_int,0},
+	};
+	static GLuint sky2[][3] = {
+		{max_int,0,-max_int},
+		{max_int,0,max_int},
+		{0,max_int,0},
+	};
+	static GLuint sky3[][3] = {
+		{-max_int,0,-max_int},
+		{max_int,0,-max_int},
+		{0,max_int,0},
+	};
+	static GLuint sky4[][3] = {
+		{-max_int,0,max_int},
+		{max_int,0,max_int},
+		{0,max_int,0},
+	};
+	
+	glNewList(SC_WORLD - 1, GL_COMPILE);
+	setColor(skyblue);
+	draw_polyi(sky1, 3);
+	draw_polyi(sky2, 3);
+	draw_polyi(sky3, 3);
+	draw_polyi(sky4, 3);
+	glEndList();
+}
 void make_world(gameState* gs) {
 	register int x, y;
 	static GLuint world[][3] = {

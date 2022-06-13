@@ -29,3 +29,4 @@ void make_world(struct gameState *gs);
 void make_lights();
 void make_vasi_lights();
 void reset_building(struct gameState* gs);
+void make_sc_world();

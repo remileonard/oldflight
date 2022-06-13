@@ -90,7 +90,6 @@ typedef struct building {
 } building;
 typedef struct building *Building;
 
-typedef float Matrix[4][4];
 
 typedef struct plane {
 	/* plane type ("F-15")		*/
@@ -340,6 +339,9 @@ typedef struct gameState {
 } gameState;
 
 typedef struct gameState *Gamestate;
+
+
+#ifndef _cplusplus
 static float ro[75] =
 {
 	.0023081f,		/* 1000 feet	*/
@@ -418,7 +420,7 @@ static float ro[75] =
 	.00011561f,
 	.00011022f,		/* 75000 feet	*/
 };
-
+typedef float Matrix[4][4];
 static char *helpmsg[25] = {
 HEADER_VERSION,
 " ",
@@ -474,6 +476,7 @@ static char *plane_menu[24] = {
 ""
 };
 
+#endif
 void rebuild_status();
 int report_card(int descent, int roll, int vx, int vz, int wheels, struct plane *p);
 void clear_report_card();

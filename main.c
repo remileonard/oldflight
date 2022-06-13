@@ -527,16 +527,34 @@ void init_strike_commander(unsigned char k) {
 	glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, lmodel_LVW);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
+
+	GLuint fogMode[] = { GL_EXP, GL_EXP2, GL_LINEAR };   // Storage For Three Types Of Fog
+	GLuint fogfilter = 0;                    // Which Fog To Use
+	GLfloat fogColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glFogi(GL_FOG_MODE, fogMode[fogfilter]);        // Fog Mode
+	glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
+	glFogf(GL_FOG_DENSITY, 0.0002f);              // How Dense Will The Fog Be
+	glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
+	glFogf(GL_FOG_START, max_int-6000.0f);             // Fog Start Depth
+	glFogf(GL_FOG_END, max_int);               // Fog End Depth
+	glEnable(GL_FOG);
+
+
 	glutSetCursor(GLUT_CURSOR_NONE);
 	reset_gs(lgs);
+	make_sc_world();
 	lgs->nocrash = 1;
 	lpp = init_plane();
 	lgs->sts = SIMULATION;
 	lgs->hud = 0;
 	
 	set_f16(lgs, lpp);
-	lpp->x = -70800.0f * 1000000.0f / 360000.0f;
-	lpp->z = -132360.0f * 1000000.0f / 360000.0f;
+	setStartPosition(lpp);
+
+
+	//lpp->x = -196038.890625;
+	//lpp->z = -368130.562500;
+	printf("STARTING FROM {%f,%f}\n", lpp->x, lpp->z);
 	lpp->azimuthf = 1800.0f;
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
