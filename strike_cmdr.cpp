@@ -489,6 +489,7 @@ void init_SC() {
 	glNewList(SC_WORLD, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
+
 		Renderer.RenderMissionObjects(&missionObj);
 		glPopAttrib();
 	glEndList();
