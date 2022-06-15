@@ -533,10 +533,10 @@ void init_strike_commander(unsigned char k) {
 	GLfloat fogColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glFogi(GL_FOG_MODE, fogMode[fogfilter]);        // Fog Mode
 	glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
-	glFogf(GL_FOG_DENSITY, 0.0002f);              // How Dense Will The Fog Be
+	glFogf(GL_FOG_DENSITY, 0.000002f);              // How Dense Will The Fog Be
 	glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
-	glFogf(GL_FOG_START, max_int-6000.0f);             // Fog Start Depth
-	glFogf(GL_FOG_END, max_int);               // Fog End Depth
+	glFogf(GL_FOG_START, max_int*2-6000.0f);             // Fog Start Depth
+	glFogf(GL_FOG_END, max_int*2);               // Fog End Depth
 	glEnable(GL_FOG);
 
 

@@ -1209,7 +1209,11 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 	}
 }
 void draw_game_sc(gameState * gs, plane *pp) {
+	if (gs->light) {
 
+		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_LIGHTING);
+	}
 	glPolygonMode(GL_FRONT_AND_BACK, gs->polymod);
 	glCallList(SC_WORLD - 1);
 	glCallList(SC_WORLD);

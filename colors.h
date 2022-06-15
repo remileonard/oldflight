@@ -62,6 +62,7 @@
 #define silver9 silver0+9
 #define dirt 62
 #define skyblue 63
+#define nightblue 64
 
 #define bgrey 16
 #define blime 1

@@ -406,6 +406,7 @@ void init_SC() {
 
 	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
 	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
 	missionObj.tre = tres[TRE_OBJECTS];

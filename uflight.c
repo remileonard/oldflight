@@ -956,33 +956,32 @@ void make_forest(int x, int y, int size, gameState *gs) {
 	}
 }
 void make_sc_world() {
-	static GLuint sky1[][3] = {
-	{-max_int,0,-max_int},
-	{-max_int,0,max_int},
-	{0,max_int,0},
+	static GLuint sky1[][4] = {
+	{-max_int,0,-max_int,skyblue},
+	{-max_int,0,max_int,skyblue},
+	{0,max_int,0,nightblue},
 	};
-	static GLuint sky2[][3] = {
-		{max_int,0,-max_int},
-		{max_int,0,max_int},
-		{0,max_int,0},
+	static GLuint sky2[][4] = {
+		{max_int,0,-max_int,skyblue},
+		{max_int,0,max_int,skyblue},
+		{0,max_int,0,nightblue},
 	};
-	static GLuint sky3[][3] = {
-		{-max_int,0,-max_int},
-		{max_int,0,-max_int},
-		{0,max_int,0},
+	static GLuint sky3[][4] = {
+		{-max_int,0,-max_int,skyblue},
+		{max_int,0,-max_int,skyblue},
+		{0,max_int,0,nightblue},
 	};
-	static GLuint sky4[][3] = {
-		{-max_int,0,max_int},
-		{max_int,0,max_int},
-		{0,max_int,0},
+	static GLuint sky4[][4] = {
+		{-max_int,0,max_int,skyblue},
+		{max_int,0,max_int,skyblue},
+		{0,max_int,0,nightblue},
 	};
 	
 	glNewList(SC_WORLD - 1, GL_COMPILE);
-	setColor(skyblue);
-	draw_polyi(sky1, 3);
-	draw_polyi(sky2, 3);
-	draw_polyi(sky3, 3);
-	draw_polyi(sky4, 3);
+	draw_polyiColor(sky1, 3);
+	draw_polyiColor(sky2, 3);
+	draw_polyiColor(sky3, 3);
+	draw_polyiColor(sky4, 3);
 	glEndList();
 }
 void make_world(gameState* gs) {

@@ -114,6 +114,15 @@ void draw_polyi(GLuint poly[][3], int nbvert) {
 	}
 	glEnd();
 }
+void draw_polyiColor(GLuint poly[][4], int nbvert) {
+	int i;
+	glBegin(GL_POLYGON);
+	for (i = 0; i < nbvert; i++) {
+		setColor(poly[i][3]);
+		glVertex3iv(poly[i]);
+	}
+	glEnd();
+}
 void draw_poly(GLfloat poly[][3], int nbvert, int drawNormal) {
 	int i;
 	GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };

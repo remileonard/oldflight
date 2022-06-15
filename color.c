@@ -31,6 +31,7 @@ void init_palette() {
 	mapcolor(grey8, 96, 96, 96);
 	mapcolor(green, 80, 144, 80);
 	mapcolor(skyblue, 80, 160, 240);
+	mapcolor(nightblue, 80 >> 2, 160 >> 2, 240 >> 2);
 	mapcolor(dirt, 0x70, 0x60, 0x30);
 	mapcolor(grey0, 224, 224, 224);
 	mapcolor(grey1, 208, 208, 208);
