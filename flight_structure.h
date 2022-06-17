@@ -211,11 +211,17 @@ typedef struct plane {
 
 typedef plane* Plane;
 
+typedef struct radarSpot {
+	char* name;
+	long x;
+	long y;
+}radarSpot;
+
 typedef struct gameState {
 
 	plane planes[MAX_PLANES];
 	Building buildings[MAX_BUILDINGS];
-
+	
 	char charbuf[80], status_text[60];							/* char buffers		*/
 	//struct tms tms_start_buf, tms_end_buf;					/* timer buffer		*/
 	//int time_start, time_end;									/* start/end times	*/
@@ -271,6 +277,9 @@ typedef struct gameState {
 	int tx, ty, tz;
 	int tviewpoint;
 	float real_fov;
+	radarSpot rspt[MAX_BUILDINGS];
+	int nbspt;
 } gameState;
 
 typedef struct gameState* Gamestate;
+

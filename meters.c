@@ -1035,3 +1035,500 @@ void draw_hud(gameState *gs, plane *pp, int sc_width, int sc_height, float X_ADJ
 	glPopAttrib();
 	glEndList();
 }
+
+void draw_hud_sc(gameState* gs, plane* pp, int sc_width, int sc_height, float X_ADJUST, float Y_ADJUST) {
+	int i;
+	int x;
+	int y;
+	int a;
+	float r;
+	float sin;
+	float cos;
+	int x_margin = HUD_MARGIN +200;
+	char charbuff[255];
+	float vv = pp->climbspeed;
+	float rhaws[][2] = {	/* 20 point unit circle	*/
+		0.0f,1.0f,
+		0.309017f,0.951057f,
+		0.587785f,0.809017f,
+		0.809017f,0.587785f,
+		0.951057f,0.309017f,
+		1.0f,0.0f,
+		0.951057f,-0.309017f,
+		0.809017f,-0.587785f,
+		0.587785f,-0.809017f,
+		0.309017f,-0.951057f,
+		0.0f,-1.0f,
+		-0.309017f,-0.951057f,
+		-0.587785f,-0.809017f,
+		-0.809017f,-0.587785f,
+		-0.951057f,-0.309017f,
+		-1.0f,0.0f,
+		-0.951057f,0.309017f,
+		-0.809017f,0.587785f,
+		-0.587785f,0.809017f,
+		-0.309017f,0.951057f,
+	};
+	char* numbers[] = {
+		"0","1","2","3","4","5","6","7","8","9",
+		"10","11","12","13","14","15","16","17","18","19",
+		"20","21","22","23","24","25","26","27","28","29",
+		"30","31","32","33","34","35","36","37","38","39",
+		"40","41","42","43","44","45","46","47","48","49",
+		"50","51","52","53","54","55","56","57","58","59",
+		"60","61","62","63","64","65","66","67","68","69",
+		"70","71","72","73","74","75","76","77","78","79",
+		"80","81","82","83","84","85","86","87","88","89",
+		"90","91","92","93","94","95","96","97","98","99","100"
+	};
+	float YMIDDLE = sc_height / 2;
+	float XMIDDLE = sc_width / 2;
+
+	if (glIsList(HUD)) {
+		glDeleteLists(HUD, 1);
+	}
+
+	glNewList(HUD, GL_COMPILE);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-0.5, sc_width + 0.5, -0.5, sc_height + .5);
+	glMatrixMode(GL_MODELVIEW);
+	setColor(orange);
+	glLineWidth(2);
+	glPushMatrix();
+	glLoadIdentity();
+	x = XMIDDLE;
+	y = 75;					/* marker for heading	*/
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y);
+	glVertex2s(x, y + 15);
+	glEnd();
+
+	y = (sc_height + 1) / 2;
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x + 4, y);
+	glVertex2s(x + 16, y);		/* nose cross hairs	*/
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x - 4, y);
+	glVertex2s(x - 16, y);
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y + 4);
+	glVertex2s(x, y + 16);
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y - 4);
+	glVertex2s(x, y - 16);
+	glEnd();
+
+	x = x_margin;				/* mach and g text	*/
+
+	sprintf(charbuff, "G %.2f", pp->lift / pp->gravity);
+	gl_print(charbuff, x, 290);
+
+
+	sprintf(charbuff, "M %.2f", pp->mach);
+	gl_print(charbuff, x, 75);
+
+	y = ((sc_height + 1) / 4);
+	x = x_margin;			/* marker for airspeed	*/
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y);
+	glVertex2s(x + 16, y);
+	gl_print("C", x + 4, y + 4);
+	glEnd();
+	x = sc_width - x_margin;		/* marker for altitude	*/
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y);
+	glVertex2s(x - 16, y);		/* and vv (climbspeed)	*/
+	glEnd();
+	x -= 32;
+	y += 30 * 3;
+	for (i = 0; i < 6; i++) {
+		glBegin(GL_LINE_STRIP);
+		glVertex2s(x, y);
+		glVertex2s(x + 8, y);		/* long tick	*/
+		glEnd();
+		glBegin(GL_LINE_STRIP);
+		glVertex2s(x, y - 15);
+		glVertex2s(x + 4, y - 15);	/* short tick	*/
+		glEnd();
+		y -= 30;
+	}
+	y -= 24;
+	gl_print("R", x - 14, y + 4);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glRects(x, y - 2, x + 60, y + 14);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	int planey = pp->y;
+	if (planey >= 1000) {
+		sprintf(charbuff, "%2d,%03d", planey / 1000, planey % 1000);
+	}
+	else {
+		sprintf(charbuff, "   %3d", planey);
+	}
+	if (vv < 0) {
+		vv = -vv;
+	}
+	if (vv > 300) {
+		charbuff[3] = '0';
+	}
+	if (vv > 30) {
+		charbuff[4] = '0';
+	}
+	charbuff[5] = '0';
+
+
+	gl_print(charbuff, x + 2, y);
+
+
+	glPushMatrix();
+	glTranslatef(0.0, vv * (60.0f * 30.0f / 1000.0f), 0.0);
+
+	y = (sc_height + 1) / 4;
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y);
+	glVertex2s(x - 14, y + 6);		/* draw triangle	*/
+	glVertex2s(x - 14, y - 6);
+	glVertex2s(x, y);
+	glEnd();
+	glPopMatrix();
+
+	glPushMatrix();
+
+	float k;
+	k = -57.3 * (sc_height + 1) / 36.0;	/* screen is 36 degrees */
+	glTranslatef(k * pp->vx / pp->vz, k * pp->vy / pp->vz, 0.0);
+
+	x = XMIDDLE;
+	y = (sc_height + 1) / 2;
+	
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x + 16, y);
+	glVertex2s(x + 6, y);		/* draw FPM		*/
+	glVertex2s(x + 4, y + 4);
+	glVertex2s(x, y + 6);
+	glVertex2s(x, y + 16);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x - 16, y);
+	glVertex2s(x - 6, y);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(x, y + 6);
+	glVertex2s(x - 4, y + 4);
+	glVertex2s(x - 6, y);
+	glVertex2s(x - 4, y - 4);
+	glVertex2s(x, y - 6);
+	glVertex2s(x + 4, y - 4);
+	glVertex2s(x + 6, y);
+	glEnd();
+	glPopMatrix();
+	
+
+	a = -gs->tps * 3600.0 / 6082.0 * pp->vz;	/* airspeed meter	*/
+	y = (sc_height + 1) / 4 - (a % 10) + 40;
+	x = x_margin - 8;			/* right edge		*/
+	a = a / 10 - 7;			/* starting number	*/
+	for (i = 0; i < 16; i++) {
+		if (a >= 0) {
+			if (a % 5) {
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(x, y);
+				glVertex2s(x - 4, y);
+				glEnd();
+			}
+			else {
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(x, y);
+				glVertex2s(x - 8, y);
+				glEnd();
+
+				if (a < 10) {
+					gl_print("  ", x - 8 - 30, y - 4);
+					gl_print(numbers[a], x - 30, y - 4);
+				}
+				else if (a < 100) {
+					gl_print(" ", x - 8 - 30, y - 4);
+					gl_print(numbers[a], x - 30, y - 4);
+				}
+				else {
+					sprintf(charbuff, "%3d", a);
+					gl_print(charbuff, x - 30, y - 4);
+				}
+			}
+		}
+		a++;
+		y += 10;
+	}
+
+	a = 0.1 * pp->y;			/* altitude in 10's	*/
+	x = sc_width - x_margin + 4;
+	y = (sc_height + 1) / 4 - (a % 10) + 40;
+	a = a / 10 - 7;			/* starting number	*/
+	for (i = 0; i < 16; i++) {
+		if (a >= 0) {
+			if (a % 5) {
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(x, y);
+				glVertex2s(x + 4, y);
+				glEnd();
+			}
+			else {
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(x, y);
+				glVertex2s(x + 8, y);
+				glEnd();
+				glRasterPos2s(x + 10, y - 4);
+				if (a < 10) {
+					gl_print("   ", x + 10, y - 4);
+					gl_print(numbers[a], x + 18, y - 4);
+				}
+				else {
+					int j = a / 10;
+
+					if (j < 10) {
+						gl_print(" ", x + 10, y - 4);
+					}
+					sprintf(charbuff, "%d,%s", j, numbers[a % 10]);
+					gl_print(charbuff, x + 18, y - 4);
+				}
+			}
+		}
+		a++;
+		y += 10;
+	}
+
+
+	a = 3600 - (int)pp->azimuthf;		/* heading in tenth's	*/
+	x = XMIDDLE - (a % 50) - 100;
+	y = 75 - 4;
+	a = a / 50 - 2;			/* heading in 5's	*/
+	for (i = 0; i < 6; i++) {
+		if (a < 0) {
+			a += 360 / 5;	/* wrap around		*/
+		}
+		if (a >= 360 / 5) {
+			a -= 360 / 5;
+		}
+		if (a & 1) {
+			glBegin(GL_LINE_STRIP);
+			glVertex2s(x, y);
+			glVertex2s(x, y - 4);
+			glEnd();
+		}
+		else {
+			glBegin(GL_LINE_STRIP);
+			glVertex2s(x, y);
+			glVertex2s(x, y - 8);
+			glEnd();
+
+			if (a < 20) {
+				gl_print("0", x - 8, y - 9 - 12);
+				gl_print(numbers[a >> 1], x, y - 9 - 12);
+			}
+			else {
+				gl_print(numbers[a >> 1], x - 8, y - 9 - 12);
+			}
+
+		}
+		a++;
+		x += 50;
+	}
+
+	x = sc_width - x_margin - 32 - 14;
+	if (pp->wheels) {
+		gl_print("L", x, 50);
+	}
+	if (pp->flaps) {
+		sprintf(charbuff, "Flap: %d", pp->flaps);
+		gl_print(charbuff, x, 30);
+	}
+	if (pp->spoilers) {
+		sprintf(charbuff, "Spoilr: %d", pp->spoilers);
+		gl_print(charbuff, x + 80, 30);
+	}
+
+	/*if (pp->autop) {
+		glRasterPos2s(x - 60, 10);
+		//glCallLists(strlen("Auto"), GL_UNSIGNED_BYTE, "Auto");
+	}*/
+	if ((pp->fuel == 0) || (pp->fuel > 10)) {
+		sprintf(charbuff, "Fuel: %d", pp->fuel >> 7);
+		gl_print(charbuff, x, 10);
+	}
+	else if (pp->fuel < 0) {
+		gl_print("Fuel: E", x, 10);
+	}
+	/* make fuel flash in the 1-10 % range */
+	else if (gs->ticks & 2) {
+		sprintf(charbuff, "Fuel: %d", pp->fuel >> 7);
+		gl_print(charbuff, x, 10);
+	}
+	else {
+		gl_print("    ", x, 10);
+	}
+
+	glRasterPos2s(x + 80, 10);
+	sprintf(charbuff, "Thrust: %d", pp->thrust);
+	gl_print(charbuff, x + 80, 10);
+
+
+	gl_print(pp->plane_type, x_margin - 30, 30);
+	/* max G force		*/
+	sprintf(charbuff, "%.1f", pp->Lmax);
+	gl_print(charbuff, x_margin - 30, 50);
+
+
+	glPushMatrix();
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(XMIDDLE - 200, 75, (XMIDDLE + 200) - (XMIDDLE - 200) + 1, ((sc_height + 1) * 3 / 4) - (75) + 1);
+	glScissor(XMIDDLE - 200, 75, (XMIDDLE + 200) - (XMIDDLE - 200) + 1, ((sc_height + 1) * 3 / 4) - (75) + 1);
+	{
+		GLint mm;
+		glGetIntegerv(GL_MATRIX_MODE, &mm);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(-200.5, 200.5, 74.5 - (sc_height + 1) / 2, (sc_height + 1) / 4 + .5);
+		glMatrixMode(mm);
+	};
+	/* rotate about nose marker	*/
+	glRotatef(.1 * -pp->twist, 0.0f, 0.0f, 1.0f);
+	/* elevation in tenths		*/
+	a = pp->elevationf;
+	i = a % 50;
+	y = i * -(sc_height + 1) / 36 / 10 - 1 * (sc_height + 1) * 5 / 36;
+	/* starting number	*/
+	a = (a - i) / 10 - 1 * 5;
+
+	for (i = 0; i < 4; i++) {
+		if (a >= -90 && a <= 90) {
+			if (a > 0) {
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(25, y);
+				glVertex2s(75, y);
+				glVertex2s(75, y - 12);
+				glEnd();
+				gl_print(numbers[a], 77, y - 12);
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(-25, y);
+				glVertex2s(-75, y);
+				glVertex2s(-75, y - 12);
+				glEnd();
+				gl_print(numbers[a], -77 - 20, y - 12);
+			}
+			else if (a < 0) {
+
+				glCallList(1);
+				glEnable(GL_LINE_STIPPLE);
+
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(25, y);
+				glVertex2s(75, y);
+				glVertex2s(75, y + 12);
+				glEnd();
+				gl_print(numbers[-a], 77, y);
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(-25, y);
+				glVertex2s(-75, y);
+				glVertex2s(-75, y + 12);
+				glEnd();
+				gl_print(numbers[-a], -77 - 20, y);
+				glDisable(GL_LINE_STIPPLE);
+			}
+			else {			/* 0 marker	*/
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(25, y);
+				glVertex2s(75, y);
+				glEnd();
+				glBegin(GL_LINE_STRIP);
+				glVertex2s(-25, y);
+				glVertex2s(-75, y);
+				glEnd();
+			}
+		}
+		a += 5;
+		y += 5 * (sc_height + 1) / 36;
+	}
+
+
+
+	glPopMatrix();
+	glPopAttrib();
+
+
+
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glPushMatrix();
+	glViewport(8, 8, (HUD_MARGIN - 50) - (8) + 1, (HUD_MARGIN - 50) - (8) + 1);
+	glScissor(8, 8, (HUD_MARGIN - 50) - (8) + 1, (HUD_MARGIN - 50) - (8) + 1); /* RHAWS scope	*/
+
+
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(-100.5, 100.5, -100.0, 100.5);
+	glMatrixMode(GL_MODELVIEW);
+
+	setColor(green0);
+	glBegin(GL_POINTS); glVertex2s(0, 0); glEnd();
+	for (i = 0; i < 3600; i += 150) {	/* static ticks	*/
+		gl_sincos(i, &sin, &cos);
+		glBegin(GL_LINE_STRIP);
+		glVertex2f(100.0f * sin, 100.0f * cos);
+		if (i % 900 == 0) {
+			r = 20.0;
+		}
+		else if (i % 450 == 0) {
+			r = 75.0;
+		}
+		else {
+			r = 88.0;
+		}
+		glVertex2f(r * sin, r * cos);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	glVertex2s(20, 0);
+	glVertex2s(20, 0);
+	glEnd();
+	glPushMatrix();
+	glScalef(25.0, 25.0, 1.0);
+	{int i; glBegin(GL_LINE_LOOP); for (i = 0; i < 20; i++) glVertex2fv(rhaws[i]); glEnd(); };
+	glScalef(2.0, 2.0, 1.0);
+	{int i; glBegin(GL_LINE_LOOP); for (i = 0; i < 20; i++) glVertex2fv(rhaws[i]); glEnd(); };
+	glScalef(2.0, 2.0, 1.0);
+	{int i; glBegin(GL_LINE_LOOP); for (i = 0; i < 20; i++) glVertex2fv(rhaws[i]); glEnd(); };
+	glPopMatrix();
+
+
+
+
+	
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(.0004f, -.0004f, .0004f);	
+	glRotatef(.1 * pp->azimuthf, 0, 0, 1);
+	glTranslatef(-pp->x, -pp->z, 0.0);
+	
+	setColor(white);		
+	for (int i = 0; i < gs->nbspt; i++) {
+		gl_print(gs->rspt[i].name, gs->rspt[i].x, gs->rspt[i].y);
+	}
+
+	glLineWidth(1);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopAttrib();
+	glEndList();
+}

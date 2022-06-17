@@ -343,13 +343,21 @@ void get_time() {
 		lgs->fps = realtps;
 		lgs->ticks = 0;
 		lgs->timer = zetimer;
+
+		/*lgs->tps = realtps;
+		lpp->gravity = G_ACC / lgs->tps / lgs->tps;
+		lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);*/
 	}
 }
 void idle(void) {
 	
 }
-void idleViewer(void) {
+void idleViewer(int va) {
 	glutPostRedisplay();
+}
+void idleViewer_sc(int va) {
+	glutPostRedisplay();
+	glutTimerFunc(TPS, idleViewer_sc, va);
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -383,13 +391,21 @@ void strike_commander(int va) {
 			set_view_screen(lgs->real_fov, XMAXSCREEN, YMAXSCREEN, 0);
 
 			draw_game_sc(lgs, lpp);
-
+			glPushMatrix();
+			glLoadIdentity();
+			glRotatef(90.0f, 0, 1, 0);
+			glRotatef(-lgs->view_angle, 0, 1, 0);
+			glTranslatef(2.0f, -4.0f, -0.0f);
+			glCallList(1535);
+			glPopMatrix();
+			
 			if (lgs->debug) {
 				draw_debug_text(lgs, lpp, msx, msy);
 				glCallList(DEBUG_TEXT);
 			}
 			else {
-				draw_hud(lgs, lpp, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
+				getRadarSpot(lgs);
+				draw_hud_sc(lgs, lpp, XMAXSCREEN, YMAXSCREEN, X_ADJUST, Y_ADJUST);
 				glCallList(HUD);
 			}
 
@@ -405,7 +421,7 @@ void strike_commander(int va) {
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
 		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
-		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
+		//glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
 	}
 }
 
@@ -530,12 +546,12 @@ void init_strike_commander(unsigned char k) {
 
 	GLuint fogMode[] = { GL_EXP, GL_EXP2, GL_LINEAR };   // Storage For Three Types Of Fog
 	GLuint fogfilter = 0;                    // Which Fog To Use
-	GLfloat fogColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat fogColor[4] = { 1.0f, 1.0f, 1.0f, 0.2f };
 	glFogi(GL_FOG_MODE, fogMode[fogfilter]);        // Fog Mode
 	glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
-	glFogf(GL_FOG_DENSITY, 0.000002f);              // How Dense Will The Fog Be
+	glFogf(GL_FOG_DENSITY, 0.000001f);              // How Dense Will The Fog Be
 	glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
-	glFogf(GL_FOG_START, max_int*2-6000.0f);             // Fog Start Depth
+	glFogf(GL_FOG_START, max_int*2-60000.0f);             // Fog Start Depth
 	glFogf(GL_FOG_END, max_int*2);               // Fog End Depth
 	glEnable(GL_FOG);
 
@@ -559,7 +575,7 @@ void init_strike_commander(unsigned char k) {
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
 	glutDisplayFunc(idle);
-	glutIdleFunc(NULL);
+	glutIdleFunc(strike_commander);
 
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
@@ -567,7 +583,7 @@ void init_strike_commander(unsigned char k) {
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
-	glutTimerFunc(1000 / lgs->tps, strike_commander, 0);
+	//glutTimerFunc(1000 / lgs->tps, strike_commander, 0);
 }
 void init_game(unsigned char k) {
 	free_memory();
@@ -689,8 +705,9 @@ void init_3D_viewer(int va) {
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(object_viewer_key);
 	glutSpecialFunc(object_special_viewerKey);
-	glutIdleFunc(idleViewer);
+	glutIdleFunc(idle);
 	glutDisplayFunc(draw_3D_viewer);
+	glutTimerFunc(TPS, idleViewer_sc, 1);
 }
 #ifdef W32
 #ifdef DEBUG

@@ -22,3 +22,4 @@ void display_artificial_horizon(plane *lpp, float X_ADJUST, float Y_ADJUST);
 void display_meters(plane *lpp);
 void draw_cockpit(plane *pp, GLubyte *halftone, int w, int h, float X_ADJUST, float Y_ADJUST);
 void draw_hud(gameState *gs, plane *pp, int w, int h, float X_ADJUST, float Y_ADJUST);
+void draw_hud_sc(gameState* gs, plane* pp, int sc_width, int sc_height, float X_ADJUST, float Y_ADJUST);

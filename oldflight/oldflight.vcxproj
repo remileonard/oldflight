@@ -158,6 +158,7 @@
     <ClInclude Include="..\f16_defs.h" />
     <ClInclude Include="..\f16_points.h" />
     <ClInclude Include="..\flight.h" />
+    <ClInclude Include="..\flight_structure.h" />
     <ClInclude Include="..\graph.h" />
     <ClInclude Include="..\strike_cmdr.h" />
     <ClInclude Include="..\irisgl.h" />

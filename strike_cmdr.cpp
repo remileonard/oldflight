@@ -89,6 +89,7 @@ extern "C" void init_SC();
 extern "C" float getY(float x, float z);
 extern "C" void setStartPosition(plane * pp);
 extern "C" void setTowerView(gameState * gs);
+extern "C" void getRadarSpot(gameState * gs);
 
 SCRenderer Renderer;
 RSMission missionObj;
@@ -179,21 +180,12 @@ float getY(float x, float z) {
 	int blocX = (int)((x / 1000000.0 * 360000.0) + 180000)/20000;
 	int blocY = (int)((z / 1000000.0 * 360000.0) + 180000)/20000;
 
-	printf("CURRENT BLOCK %d, current Y:%f [%f,%f]-{%d,%d}\n", 
-		blocY * 18 + blocX, 
-		area1.elevation[blocY*18 + blocX],
-		x,
-		z,
-		blocX,
-		blocY
-	);
-	//
 	return (area1.getGroundLevel(blocY * 18 + blocX, x, z)*(1000000.0f / 360000.0f));
 }
 #define max_int 500000
 void init_SC() {
 	
-    SetBase("G:/DOS/SC");
+    SetBase("C:/DOSBox-X/DRIVE_C/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();
@@ -258,11 +250,12 @@ void init_SC() {
 		glDeleteLists(F16, 1);
 		glNewList(F16, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glScalef(1.5, 1.5, 1.5);
+		glPushMatrix();
+		glScalef(1000000.0f / 360000.0f, 1000000.0f / 360000.0f, 1000000.0f / 360000.0f);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[0].entity, LOD_LEVEL_MAX);
-		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 		glPopAttrib();
 		glEndList();
 	}
@@ -270,11 +263,12 @@ void init_SC() {
 		glDeleteLists(F15, 1);
 		glNewList(F15, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glScalef(1.5, 1.5, 1.5);
+		glPushMatrix();
+		glScalef(1000000.0f / 360000.0f, 1000000.0f / 360000.0f, 1000000.0f / 360000.0f);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[2].entity, LOD_LEVEL_MAX);
-		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 		glPopAttrib();
 		glEndList();
 	}
@@ -282,12 +276,13 @@ void init_SC() {
 	if (glIsList(F18)) {
 		glDeleteLists(F18, 1);
 		glNewList(F18, GL_COMPILE);
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glScalef(1.5, 1.5, 1.5);
+		glPushAttrib(GL_ALL_ATTRIB_BITS); 
+		glPushMatrix();
+		glScalef(1000000.0f / 360000.0f, 1000000.0f / 360000.0f, 1000000.0f / 360000.0f);
 		glRotatef(90, 0, 1, 0);
 		glEnable(GL_TEXTURE_2D);
 		Renderer.DrawModel(showCases[3].entity, LOD_LEVEL_MAX);
-		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 		glPopAttrib();
 		glEndList();
 	}
@@ -355,4 +350,22 @@ void setTowerView(gameState* gs) {
 			STRIBASE->XAxisRelative, STRIBASE->ZAxisRelative, STRIBASE->YAxisRelative
 		);
 	}
+}
+void getRadarSpot(gameState* gs) {
+	int rdrspt = 0;
+	for (int i = 0; i < missionObj.missionObjects.size(); i++) {
+		gs->rspt[rdrspt].x = missionObj.missionObjects[i]->XAxisRelative * 1000000.0f / 360000.0f;
+		gs->rspt[rdrspt].y = missionObj.missionObjects[i]->YAxisRelative * -1000000.0f / 360000.0f;
+		gs->rspt[rdrspt].name = missionObj.missionObjects[i]->MemberName;
+		rdrspt++;
+	}
+	for (int j = 0; j < 324; j++) {
+		for (int i = 0; i < area1.objects[j].size(); i++) {
+			gs->rspt[rdrspt].x = area1.objects[j][i].position[0] * 1000000.0f / 360000.0f;
+			gs->rspt[rdrspt].y = area1.objects[j][i].position[2] * -1000000.0f / 360000.0f;
+			gs->rspt[rdrspt].name = area1.objects[j][i].name;
+			rdrspt++;
+		}
+	}
+	gs->nbspt = rdrspt;
 }
