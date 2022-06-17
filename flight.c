@@ -547,9 +547,6 @@ void reset_gs(struct gameState *gs) {
 	gs->tower_fov = 45.0f;
 	gs->polymod = GL_FILL;
 	gs->ticks = 0;
-	gs->camera.x = 0.0f;
-	gs->camera.y = 0.0f;
-	gs->camera.z = 1.0f;
 
 	gs->eyes.x = 100.0f;
 	gs->eyes.y = 50.0f;

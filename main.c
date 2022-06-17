@@ -550,7 +550,7 @@ void init_strike_commander(unsigned char k) {
 	
 	set_f16(lgs, lpp);
 	setStartPosition(lpp);
-
+	setTowerView(lgs);
 
 	//lpp->x = -196038.890625;
 	//lpp->z = -368130.562500;
