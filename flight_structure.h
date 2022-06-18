@@ -279,6 +279,7 @@ typedef struct gameState {
 	float real_fov;
 	radarSpot rspt[MAX_BUILDINGS];
 	int nbspt;
+	short view_angle_vertical;
 } gameState;
 
 typedef struct gameState* Gamestate;

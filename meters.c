@@ -1516,7 +1516,7 @@ void draw_hud_sc(gameState* gs, plane* pp, int sc_width, int sc_height, float X_
 	
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(.0004f, -.0004f, .0004f);	
+	glScalef(.002f, -.002f, .002f);	
 	glRotatef(.1 * pp->azimuthf, 0, 0, 1);
 	glTranslatef(-pp->x, -pp->z, 0.0);
 	

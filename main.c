@@ -1,5 +1,7 @@
 ﻿#include "main.h"
 
+int bmsx;
+int bmsy;
 void free_memory() {
 	if (lpp != NULL) {
 		free(lpp);
@@ -26,6 +28,12 @@ void mouse_mouve(int x, int y) {
 			//glutPostRedisplay();
 			break;
 		case SIMULATION:
+			if (moveok) {
+				msdx = x - msx;
+				msdy = y - msy;
+				lgs->view_angle += msdx * -0.5;
+				lgs->view_angle_vertical += msdy * -0.5;
+			}
 			break;
 		}
 	}
@@ -51,6 +59,7 @@ void mouse_click(int button, int state, int x, int y) {
 			break;
 		case GLUT_MIDDLE_BUTTON:
 			lpp->rudder = 0.0f;
+			moveok = (state == GLUT_DOWN);
 			break;
 		case GLUT_LEFT_BUTTON:
 			lpp->rudder -= .1f;
@@ -372,6 +381,12 @@ void strike_commander(int va) {
 	if (lgs->sts == SIMULATION) {
 		lgs->ticks++;
 		zetimer1 = glutGet(GLUT_ELAPSED_TIME);
+		if (moveok) {
+			bmsx = msx;
+			bmsy = msx;
+			msx = XMIDDLE;
+			msy = YMIDDLE;
+		}
 		simulation(lgs, lpp, msx, msy, XMIDDLE, YMIDDLE, XMAXSCREEN, YMAXSCREEN);
 		lgs->groundlevel =  getY(lpp->x, lpp->z);
 		setClearColor(grey12);
@@ -391,13 +406,19 @@ void strike_commander(int va) {
 			set_view_screen(lgs->real_fov, XMAXSCREEN, YMAXSCREEN, 0);
 
 			draw_game_sc(lgs, lpp);
-			glPushMatrix();
-			glLoadIdentity();
-			glRotatef(90.0f, 0, 1, 0);
-			glRotatef(-lgs->view_angle, 0, 1, 0);
-			glTranslatef(2.0f, -4.0f, -0.0f);
-			glCallList(1535);
-			glPopMatrix();
+			if (lgs->view_switch == PILOTE) {
+				glPushMatrix();
+				glLoadIdentity();
+				glRotatef(90.0f, 0, 1, 0);
+				glRotatef(-lgs->view_angle, 0, 1, 0);
+				glPushMatrix();
+				glRotatef(-lgs->view_angle_vertical, 0, 0, 1);
+				glPopMatrix();
+				glTranslatef(2.0f, -4.0f, -0.0f);
+				glCallList(1535);
+				glPopMatrix();
+				
+			}
 			
 			if (lgs->debug) {
 				draw_debug_text(lgs, lpp, msx, msy);
@@ -421,6 +442,10 @@ void strike_commander(int va) {
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
 		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
+		if (moveok) {
+			msx = bmsx;
+			msy = bmsy;
+		}
 		//glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
 	}
 }

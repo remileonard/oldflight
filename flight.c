@@ -544,6 +544,7 @@ void reset_gs(struct gameState *gs) {
 	gs->eye_y = 400.0f;
 	gs->eye_z = -3150.0f;
 	gs->view_switch = PILOTE;
+	gs->view_angle_vertical = 0;
 	gs->view_angle = 0;
 	gs->tower_fov = 45.0f;
 	gs->polymod = GL_FILL;
