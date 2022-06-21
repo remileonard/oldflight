@@ -356,6 +356,30 @@ void get_time() {
 		/*lgs->tps = realtps;
 		lpp->gravity = G_ACC / lgs->tps / lgs->tps;
 		lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);*/
+
+#ifdef TRUE
+		float veldiff;
+
+		if (lgs->tps == realtps) {
+			lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
+			
+		} else if (lgs->tps < realtps) {
+			veldiff = realtps / (float)(realtps + 1);
+			lgs->tps++;
+			lgs->vx_add = ((lpp->vx * veldiff) - lpp->vx) / realtps;
+			lgs->vy_add = ((lpp->vy * veldiff) - lpp->vy) / realtps;
+			lgs->vz_add = ((lpp->vz * veldiff) - lpp->vz) / realtps;
+		} else /* (current_tps < int_tps) */ {
+			veldiff = realtps / (float)(realtps - 1);
+			lgs->tps--;
+			lgs->vx_add = ((lpp->vx * veldiff) - lpp->vx) / realtps;
+			lgs->vy_add = ((lpp->vy * veldiff) - lpp->vy) / realtps;
+			lgs->vz_add = ((lpp->vz * veldiff) - lpp->vz) / realtps;
+		}
+		lpp->gravity = G_ACC / lgs->tps / lgs->tps;
+		lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);
+		
+#endif
 	}
 }
 void idle(void) {

@@ -185,7 +185,7 @@ float getY(float x, float z) {
 #define max_int 500000
 void init_SC() {
 	
-    SetBase("C:/DOSBox-X/DRIVE_C/SC");
+    SetBase("G:/DOS/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();

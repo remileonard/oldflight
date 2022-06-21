@@ -1194,6 +1194,9 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		pp->climbspeed = gs->tps * (pp->y - pp->last_py);
 
 
+		pp->vx += gs->vx_add;
+		pp->vy += gs->vy_add;
+		pp->vz += gs->vz_add;
 		if (pp->thrust > 0) {
 			itemp = pp->thrust;
 		}
