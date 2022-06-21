@@ -1129,13 +1129,13 @@ void draw_hud_sc(gameState* gs, plane* pp, int sc_width, int sc_height, float X_
 	x = x_margin;				/* mach and g text	*/
 
 	sprintf(charbuff, "G %.2f", pp->lift / pp->gravity);
-	gl_print(charbuff, x, 290);
+	gl_print(charbuff, x, 450);
 
 
 	sprintf(charbuff, "M %.2f", pp->mach);
-	gl_print(charbuff, x, 75);
+	gl_print(charbuff, x, 175);
 
-	y = ((sc_height + 1) / 4);
+	y = ((sc_height + 1) / 4)+110;
 	x = x_margin;			/* marker for airspeed	*/
 	glBegin(GL_LINE_STRIP);
 	glVertex2s(x, y);
@@ -1168,7 +1168,7 @@ void draw_hud_sc(gameState* gs, plane* pp, int sc_width, int sc_height, float X_
 	glRects(x, y - 2, x + 60, y + 14);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	int planey = pp->y;
+	int planey = pp->y-gs->groundlevel;
 	if (planey >= 1000) {
 		sprintf(charbuff, "%2d,%03d", planey / 1000, planey % 1000);
 	}

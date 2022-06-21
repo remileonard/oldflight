@@ -185,7 +185,7 @@ float getY(float x, float z) {
 #define max_int 500000
 void init_SC() {
 	
-    SetBase("G:/DOS/SC");
+    SetBase("f:/tools/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();
@@ -217,7 +217,7 @@ void init_SC() {
 
 
 	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-7A.IFF");
 	
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
