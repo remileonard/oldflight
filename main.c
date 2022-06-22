@@ -365,12 +365,14 @@ void get_time() {
 			
 		} else if (lgs->tps < realtps) {
 			veldiff = realtps / (float)(realtps + 1);
+			printf("VELDIFF %f\n", veldiff);
 			lgs->tps++;
 			lgs->vx_add = ((lpp->vx * veldiff) - lpp->vx) / realtps;
 			lgs->vy_add = ((lpp->vy * veldiff) - lpp->vy) / realtps;
 			lgs->vz_add = ((lpp->vz * veldiff) - lpp->vz) / realtps;
 		} else /* (current_tps < int_tps) */ {
 			veldiff = realtps / (float)(realtps - 1);
+			printf("VELDIFF %f\n", veldiff);
 			lgs->tps--;
 			lgs->vx_add = ((lpp->vx * veldiff) - lpp->vx) / realtps;
 			lgs->vy_add = ((lpp->vy * veldiff) - lpp->vy) / realtps;
@@ -608,7 +610,7 @@ void init_strike_commander(unsigned char k) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	reset_gs(lgs);
 	make_sc_world();
-	lgs->nocrash = 1;
+	lgs->nocrash = 0;
 	lpp = init_plane();
 	lgs->sts = SIMULATION;
 	lgs->hud = 0;

@@ -90,7 +90,7 @@ extern "C" float getY(float x, float z);
 extern "C" void setStartPosition(plane * pp);
 extern "C" void setTowerView(gameState * gs);
 extern "C" void getRadarSpot(gameState * gs);
-
+extern "C" int isOnRunWay(plane * pp);
 SCRenderer Renderer;
 RSMission missionObj;
 RSArea area1;
@@ -185,7 +185,7 @@ float getY(float x, float z) {
 #define max_int 500000
 void init_SC() {
 	
-    SetBase("f:/tools/SC");
+    SetBase("G:/dos/SC");
 	printf("Strike commander assets\n");
     for (size_t i = 0; i < NUM_TRES; i++) {
         TreArchive* tre = new TreArchive();
@@ -217,7 +217,7 @@ void init_SC() {
 
 
 	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-7A.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
 	
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
@@ -368,4 +368,16 @@ void getRadarSpot(gameState* gs) {
 		}
 	}
 	gs->nbspt = rdrspt;
+}
+int isOnRunWay(plane* pp) {
+#define IN_BOX(p,llx,urx,llz,urz) (llx <= p -> x* 360000.0f/1000000.0f && p -> x* 360000.0f/1000000.0f <= urx && llz <= p -> z* -360000.0f/1000000.0f && p -> z* -360000.0f/1000000.0f <= urz)
+	
+	for (int i = 0; i < area1.objectOverlay.size(); i++) {
+		
+		if (IN_BOX(pp, area1.objectOverlay[i].lx, area1.objectOverlay[i].hx, area1.objectOverlay[i].ly, area1.objectOverlay[i].hy)) {
+			
+			return 1;
+		}
+	}
+	return 0;
 }

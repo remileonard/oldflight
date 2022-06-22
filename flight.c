@@ -955,6 +955,7 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 		if (pp->y > 50000.0) pp->thrust = 0;	
 		else if (pp->y > gs->groundlevel + 4.0) {
 			/* not on ground	*/
+			
 			if (pp->on_ground) {
 				/* if was on ground	*/
 				/* clear report card	*/
@@ -971,7 +972,8 @@ void simulation(struct gameState* gs, struct plane* pp, int msx, int msy, int XM
 			if (gs->nocrash == 0) {
 				if (IN_BOX(pp, -800.0, 100.0, -9500.0, 1000.0) ||
 					IN_BOX(pp, 100.0, 1300.0, -2500.0, -1500.0) ||
-					IN_BOX(pp, -2300.0, -800.0, -4900.0, -2000.0))
+					IN_BOX(pp, -2300.0, -800.0, -4900.0, -2000.0) ||
+					isOnRunWay(pp))
 					/* and not on ground before */
 					if (!pp->on_ground) {
 						int rating;
