@@ -318,7 +318,7 @@ int report_card(int descent, int roll, int vx, int vz, int wheels, struct plane*
 	glNewList(REPORT_CARD, GL_COMPILE);
 	
 	azimuth = p->azimuthf;
-	on_runway = IN_BOX(p, -100.0, 100.0, -8500.0, 0.0);
+	on_runway = IN_BOX(p, -100.0, 100.0, -8500.0, 0.0) || isOnRunWay(p);
 
 	roll /= 10;
 	if (roll > 180) roll -= 360;
@@ -340,7 +340,7 @@ int report_card(int descent, int roll, int vx, int vz, int wheels, struct plane*
 		gl_print("*** Landed with the landing gear up!", 500, y);
 		rating = 0;
 	}
-	if (descent > 10) {
+	if (descent > 100) {
 		gl_print("*** Descending too fast!", 350, y - DY);
 		rating = 0;
 	}
