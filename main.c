@@ -357,7 +357,7 @@ void get_time() {
 		lpp->gravity = G_ACC / lgs->tps / lgs->tps;
 		lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);*/
 
-#ifdef TRUE
+#ifdef NOTIME
 		float veldiff;
 
 		if (lgs->tps == realtps) {
@@ -472,7 +472,7 @@ void strike_commander(int va) {
 			msx = bmsx;
 			msy = bmsy;
 		}
-		//glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
+		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)), strike_commander, va);
 	}
 }
 
@@ -625,8 +625,11 @@ void init_strike_commander(unsigned char k) {
 	lpp->azimuthf = 1800.0f;
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
+	//glutDisplayFunc(idle);
+	//glutIdleFunc(strike_commander);
+
 	glutDisplayFunc(idle);
-	glutIdleFunc(strike_commander);
+	glutIdleFunc(NULL);
 
 	glutMotionFunc(mouse_mouve);
 	glutMouseFunc(mouse_click);
@@ -634,7 +637,7 @@ void init_strike_commander(unsigned char k) {
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
-	//glutTimerFunc(1000 / lgs->tps, strike_commander, 0);
+	glutTimerFunc(1000 / lgs->tps, strike_commander, 0);
 }
 void init_game(unsigned char k) {
 	free_memory();
@@ -810,13 +813,14 @@ int main_start(int argc, char *argv[]) {
 	make_textures_cube();
 	init_SC();
 	//test_SC();
+#ifdef ANTIALIAS
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_LINE_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glEnable(GL_POINT_SMOOTH);
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-
+#endif
 	init_presentation(0);
 	
 	
