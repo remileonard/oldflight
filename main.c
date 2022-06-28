@@ -346,9 +346,9 @@ void get_time() {
 	
 	int zetimer = glutGet(GLUT_ELAPSED_TIME);
 	int timeelapsed = zetimer - lgs->timer +1;
-	if (lgs->ticks == 20) {
+	if (lgs->ticks == 60) {
 		float realtps = lgs->ticks / (timeelapsed/1000.0f);
-		frames = realtps / 20;
+		frames = realtps / 60;
 		lgs->fps = realtps;
 		lgs->ticks = 0;
 		lgs->timer = zetimer;
@@ -610,7 +610,7 @@ void init_strike_commander(unsigned char k) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	reset_gs(lgs);
 	make_sc_world();
-	lgs->nocrash = 0;
+	lgs->nocrash = 1;
 	lpp = init_plane();
 	lgs->sts = SIMULATION;
 	lgs->hud = 0;

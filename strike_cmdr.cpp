@@ -177,8 +177,11 @@ void ParseObjList(IffLexer* lexer) {
 }
 
 float getY(float x, float z) {
-	int blocX = (int)((x / 1000000.0 * 360000.0) + 180000)/20000;
-	int blocY = (int)((z / 1000000.0 * 360000.0) + 180000)/20000;
+	
+	int centerX = 180000;
+	int centerY = 180000;
+	int blocX = (int)((x / 1000000.0 * 360000.0) + centerX)/20000;
+	int blocY = (int)((z / 1000000.0 * 360000.0) + centerY)/20000;
 
 	return (area1.getGroundLevel(blocY * 18 + blocX, x, z)*(1000000.0f / 360000.0f));
 }
@@ -216,8 +219,8 @@ void init_SC() {
 	ParseObjList(&objToDisplay);
 
 
-	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-5A.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
+	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
 	
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
@@ -295,11 +298,15 @@ void init_SC() {
 
 	glNewList(SC_WORLD, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushMatrix();
+		glScalef(1000000.0f / 360000.0f, 1000000.0f / 360000.0f, 1000000.0f / 360000.0f);
 		Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
-
 		Renderer.RenderMissionObjects(&missionObj);
+		glPopMatrix();
 		glPopAttrib();
 	glEndList();
+
+	
 
 	for (int i = 0; i < 324; i++) {
 		glNewList(objprt++, GL_COMPILE);
@@ -323,6 +330,16 @@ void init_SC() {
 		glEndList();
 		printf("OBJECT CACHE %s\n", it->first.c_str());
 	}
+
+	glNewList(objprt++, GL_COMPILE);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glPushMatrix();
+	glScalef(0.001f, 0.001f, 0.001f);
+	Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
+	Renderer.RenderMissionObjects(&missionObj);
+	glPopMatrix();
+	glPopAttrib();
+	glEndList();
 	
 }
 void setStartPosition(plane* pp) {
