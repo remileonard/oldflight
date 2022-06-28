@@ -324,11 +324,11 @@ void get_time() {
 	int zetimer = glutGet(GLUT_ELAPSED_TIME);
 	int timeelapsed = zetimer - lgs->timer +1;
 	int inttps=0;
+	
+	
+	
 	if (lgs->ticks == 60) {
-		float realtps = lgs->ticks / (timeelapsed/1000.0f);
-		frames = realtps / 60;
-		inttps = realtps;
-		if (inttps > 0) {
+		/*if (inttps > 0) {
 			if (inttps > lgs->tps) {
 				lgs->tps++;
 			}
@@ -340,14 +340,17 @@ void get_time() {
 			lpp->fps_knots = lgs->tps * (3600.0f / 6082.0f);
 			lpp->Lmax = lpp->LmaxDEF * lpp->gravity;
 			lpp->Lmin = lpp->LminDEF * lpp->gravity;
-		}
+		}*/
+		float realtps = lgs->ticks / (timeelapsed / 1000.0f);
+		frames = realtps / 60;
+		inttps = realtps;
 		lgs->fps = realtps;
 		lgs->ticks = 0;
 		lgs->timer = zetimer;
 	}
 }
 void idle(void) {
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -402,7 +405,7 @@ void flight_simulation(int va) {
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
 		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
-		//glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
+		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
 	}
 }
 void flight_demo_simulation(int va) {
@@ -509,7 +512,7 @@ void init_game(unsigned char k) {
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
-	//glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
+	glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
 }
 void init_demo(int va) {
     if (lgs->sts == PRESENTATION) {
