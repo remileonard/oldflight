@@ -229,6 +229,12 @@ void init_SC() {
 	missionObj.InitFromIFF(&missionIFF);
 	missionObj.PrintMissionInfos();
 
+
+	TreEntry* f16intel = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\INTEL\\F-16R.IFF");
+	IffLexer f16intelIff;
+	f16intelIff.InitFromRAM(f16intel->data, f16intel->size);
+	f16intelIff.List(stdout);
+	
 	char * mname = missionObj.getMissionAreaFile();
 	char areaName[9 + 4];
 
@@ -362,7 +368,7 @@ void setTowerView(gameState* gs) {
 		gs->tx = STRIBASE->XAxisRelative * 1000000.0f / 360000.0f;
 		gs->tz = STRIBASE->YAxisRelative * -1000000.0f / 360000.0f;
 		gs->ty = (STRIBASE->ZAxisRelative * 1000000.0f / 360000.0f)+200;
-		printf("TOWER POINT {%f,%f,%f} from [%d,%d,%d]\n",
+		printf("TOWER POINT {%d,%d,%d} from [%d,%d,%d]\n",
 			gs->tx, gs->ty, gs->tz,
 			STRIBASE->XAxisRelative, STRIBASE->ZAxisRelative, STRIBASE->YAxisRelative
 		);
