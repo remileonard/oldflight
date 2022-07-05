@@ -313,7 +313,7 @@ void init_SC() {
 	glEndList();
 
 	
-	/**/
+	/* 
 	for (int i = 0; i < 324; i++) {
 		glNewList(objprt++, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);

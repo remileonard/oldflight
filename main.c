@@ -388,11 +388,11 @@ void idle(void) {
 	
 }
 void idleViewer(int va) {
-	glutPostRedisplay();
+	
 }
 void idleViewer_sc(int va) {
 	glutPostRedisplay();
-	glutTimerFunc(TPS, idleViewer_sc, va);
+	glutTimerFunc(1000 / TPS, idleViewer_sc, va);
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -761,7 +761,7 @@ void init_3D_viewer(int va) {
 	glutSpecialFunc(object_special_viewerKey);
 	glutIdleFunc(idle);
 	glutDisplayFunc(draw_3D_viewer);
-	glutTimerFunc(TPS, idleViewer_sc, 1);
+	glutTimerFunc(1000/TPS, idleViewer_sc, 1);
 }
 #ifdef W32
 #ifdef DEBUG
