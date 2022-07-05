@@ -42,7 +42,7 @@ GLuint texID[64];
 #define HUD_MARGIN 250
 #define PLANE_ID(p) ((p)->planeid)
 
-#define TPS 60
+#define TPS 90
 #define MAX_TURNRATE (600/TPS)
 #define DELAY_FACTOR 4
 #define DELAY TPS/4
