@@ -6,6 +6,7 @@
 #include "libRealSpace/src/RSMission.h"
 #include <cctype>
 #include "flight_structure.h"
+#include "GL/glut.h"
 
 #define F15  1020
 #define F16  1030
@@ -220,7 +221,7 @@ void init_SC() {
 
 
 	//TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\TEMPLATE.IFF");
-	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-1A.IFF");
+	TreEntry* mission = tres[TRE_MISSIONS]->GetEntryByName("..\\..\\DATA\\MISSIONS\\MISN-12A.IFF");
 	
 	IffLexer missionIFF;
 	missionIFF.InitFromRAM(mission->data, mission->size);
@@ -308,12 +309,24 @@ void init_SC() {
 		glScalef(1000000.0f / 360000.0f, 1000000.0f / 360000.0f, 1000000.0f / 360000.0f);
 		Renderer.RenderWorld(&area1, BLOCK_LOD_MAX, 400);
 		Renderer.RenderMissionObjects(&missionObj);
+		glColor3f(1, 0, 0);
+		for (int j = 0; j < missionObj.missionAreas.size(); j++) {
+			glPushMatrix();
+			glTranslatef(
+				missionObj.missionAreas.at(j)->XAxis,
+				missionObj.missionAreas.at(j)->ZAxis,
+				-missionObj.missionAreas.at(j)->YAxis
+			);
+			glutWireCube(missionObj.missionAreas.at(j)->AreaWidth);
+			glPopMatrix();
+		}
+
 		glPopMatrix();
 		glPopAttrib();
 	glEndList();
 
 	
-	/* 
+	/**/
 	for (int i = 0; i < 324; i++) {
 		glNewList(objprt++, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
