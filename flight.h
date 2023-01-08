@@ -18,7 +18,7 @@ static int XMIDDLE = XWIDTH / 2;
 static int YMIDDLE = YHEIGHT / 2;
 static float X_ADJUST = XWIDTH / 1024.0;
 static float Y_ADJUST = YHEIGHT / 768.0;
-GLuint texID[3];
+
 
 
 #define START_X 850.0

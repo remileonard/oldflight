@@ -1,9 +1,6 @@
-#include "graph.h"
 #include "objects.h"
+#include "graph.h"
 #include "bitmap.h"
-
-#include "flight.h"
-
 void make_house() {
 	float murnort[][3] = {
 		4,0,4,

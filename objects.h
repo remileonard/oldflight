@@ -1,3 +1,5 @@
+#pragma once
+
 /**************************************************************************
  *									  *
  *  Copyright (C)  1988 Silicon Graphics, Inc.	  *
@@ -98,6 +100,10 @@
 #define HUD			9091
 #define COCKPIT		9092
 #define BUILDINGS_OFFSET 10000
+#include "graph.h"
+#include "colors.h"
+#include "maths.h"
+#include "flight.h"
 void make_my_building(int obj, int col, int llx, int lly, int llz, int dx, int dy, int dz, float segments);
 void make_house();
 void make_tree();
