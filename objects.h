@@ -1,5 +1,5 @@
 #pragma once
-
+#include "gamestruct.h"
 /**************************************************************************
  *									  *
  *  Copyright (C)  1988 Silicon Graphics, Inc.	  *
@@ -59,7 +59,7 @@
 #define RHAWS_EDIT 107
 
 /* reserve BUILDING_OBJECTS to BUILDING_OBJECTS + MAX_BUILDINGS*4 */
-#define MAX_BUILDINGS 5000000
+
 #define BUILDING_OBJECTS 125
 #define WHEEL_ANGLE 960
 #define LWHEEL_ANGLE 961

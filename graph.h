@@ -10,7 +10,7 @@
 #include "colors.h"
 #include "maths.h"
 
-GLuint texID[3];
+static GLuint texID[3];
 
 void draw_mouse_cursor(int w, int h, int x, int y);
 void draw_filled_circle(GLfloat x, GLfloat y, GLfloat radius);

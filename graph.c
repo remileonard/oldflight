@@ -205,6 +205,6 @@ GLvoid glPrint(char* text, int base)								// Custom GL "Print" Routine
 	glPushAttrib(GL_LIST_BIT);							// Pushes The Display List Bits
 	glListBase(base - 32);								// Sets The Base Character to 32
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
-	printf(text);
+	printf("%s\n",text);
 	glPopAttrib();										// Pops The Display List Bits
 }

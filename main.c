@@ -405,7 +405,7 @@ void flight_simulation(int va) {
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
 		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
-		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, va);
+		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, 0);
 	}
 }
 void flight_demo_simulation(int va) {
@@ -503,7 +503,7 @@ void init_game(unsigned char k) {
 	}
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
-	glutDisplayFunc(flight_simulation);
+	glutDisplayFunc(idle);
 	glutIdleFunc(idle);
 
 	glutMotionFunc(mouse_mouve);
