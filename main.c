@@ -325,6 +325,15 @@ void get_time() {
 	int timeelapsed = zetimer - lgs->timer +1;
 	int inttps=0;
 	
+	int waitFPS = 1;
+	int zet = 0;
+	int tel = 0;
+	float mytps = (1000 / (1.0 * TPS));
+	while (waitFPS) {
+		zet = glutGet(GLUT_ELAPSED_TIME);
+		tel = zet - lgs->timer + 1;
+		waitFPS = mytps > 1000.0f / (lgs->ticks / (tel / 1000.0f));
+	}
 	
 	
 	if (lgs->ticks == 60) {
@@ -350,7 +359,7 @@ void get_time() {
 	}
 }
 void idle(void) {
-	//glutPostRedisplay();
+	glutPostRedisplay();
 }
 void visible(int vis) {
 	if (vis == GLUT_VISIBLE)
@@ -360,7 +369,7 @@ void visible(int vis) {
 }
 
 
-void flight_simulation(int va) {
+void flight_simulation() {
 	int zetimer1, zetimer2;
 	if (lgs->sts == SIMULATION) {
 		lgs->ticks++;
@@ -400,12 +409,9 @@ void flight_simulation(int va) {
 			
 		}
 		draw_mouse_cursor(XMAXSCREEN, YMAXSCREEN, msx, msy);
-		glFlush();
-		glutSwapBuffers();
 		zetimer2 = glutGet(GLUT_ELAPSED_TIME);
-		//printf("time simul and render %d %d \n", zetimer2 - zetimer1, (1000 / lgs->tps) - (zetimer2 - zetimer1));
 		get_time();
-		glutTimerFunc(fabs((1000 / lgs->tps) - (zetimer2 - zetimer1)) , flight_simulation, 0);
+		glutSwapBuffers();
 	}
 }
 void flight_demo_simulation(int va) {
@@ -503,7 +509,7 @@ void init_game(unsigned char k) {
 	}
 	lgs->vx_add = lgs->vy_add = lgs->vz_add = 0.0;
 	glutReshapeFunc(reshape_3d);
-	glutDisplayFunc(idle);
+	glutDisplayFunc(flight_simulation);
 	glutIdleFunc(idle);
 
 	glutMotionFunc(mouse_mouve);
@@ -512,7 +518,7 @@ void init_game(unsigned char k) {
 	glutKeyboardFunc(simul_key);
 	glutSpecialFunc(special_key);
 	reshape_3d(XMAXSCREEN, YMAXSCREEN);
-	glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
+	//glutTimerFunc(1000 / lgs->tps, flight_simulation, 0);
 }
 void init_demo(int va) {
     if (lgs->sts == PRESENTATION) {
@@ -541,7 +547,7 @@ void init_presentation(int va) {
 	lgs->sts = PRESENTATION;
 	reshape_2d(XMAXSCREEN, YMAXSCREEN);
 	glutDisplayFunc(draw_presentation);
-	glutIdleFunc(draw_presentation);
+	glutIdleFunc(idle);
 	glutReshapeFunc(reshape_2d);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(presentation_key);

@@ -32,7 +32,7 @@ void presentation_key(unsigned char k, int x, int y);
 void getTime();
 void idle(void);
 void visible(int vis);
-void flight_simulation(int va);
+void flight_simulation();
 void flight_demo_simulation(int va);
 void init_game(unsigned char k);
 void init_demo(int va);
